@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import store from "@/data/store.json";
 import VipComparisonTable from "@/components/VipComparisonTable";
+import BackgroundHeader from "@/components/backgroundheader";
 
 type Conta = {
   nick: string;
@@ -38,6 +39,9 @@ const cores = {
 };
 
 export default function LojaPage() {
+
+  
+  
   const [conta, setConta] = useState<Conta | null>(null);
   const router = useRouter();
 
@@ -53,30 +57,45 @@ export default function LojaPage() {
       router.push("/validar");
       return;
     }
+    
 
-    console.log("Comprar VIP:", vipId, "Conta:", conta);
-    // futuro: carrinho / checkout
+    const vip = store.vips.find(v => v.id === vipId);
+    if (!vip) return;
+
+    const item = {
+      id: vip.id,
+      nome: `VIP ${vip.nome}`,
+      preco: vip.preco.valor,
+      quantidade: 1,
+    };
+
+    localStorage.setItem("maven_cart", JSON.stringify([item]));
+    router.push("/carrinho");
   }
 
+
   return (
-  <div className="space-y-12">
-    
-    {/* AVISO */}
-    {!conta && (
-      <div className="bg-[#1a0f14] border border-red-500/30 rounded-xl p-4 text-sm text-red-300">
-        ⚠️ Para comprar um VIP, é necessário validar sua conta.
-      </div>
-    )}
+    <div className="space-y-12">
+      <BackgroundHeader />
 
-    {/* CARDS */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {store.vips.map((vip) => {
-        const cor = cores[vip.id as keyof typeof cores];
 
-        return (
-          <div
-            key={vip.id}
-            className={`
+      {/* AVISO */}
+      {!conta && (
+        <div className="bg-[#1a0f14] border border-red-500/30 rounded-xl p-4 text-sm sm:text-base
+ text-red-300">
+          ⚠️ Para comprar um VIP, é necessário validar sua conta.
+        </div>
+      )}
+
+      {/* CARDS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {store.vips.map((vip) => {
+          const cor = cores[vip.id as keyof typeof cores];
+
+          return (
+            <div
+              key={vip.id}
+              className={`
               bg-[#13080C]
               border ${cor.border}
               rounded-2xl
@@ -86,33 +105,33 @@ export default function LojaPage() {
               text-center
               ${cor.glow}
             `}
-          >
-            <h2 className="text-xl font-bold mb-2">
-              VIP {vip.nome}
-            </h2>
-
-            <p className={`text-2xl font-extrabold mb-6 ${cor.price}`}>
-              R$ {vip.preco.valor.toFixed(2)}
-              {vip.preco.tipo === "mensal" && "/mês"}
-            </p>
-
-            <button
-              onClick={() => handleComprar(vip.id)}
-              className={`w-full py-3 rounded-xl font-bold transition ${cor.button}`}
             >
-              COMPRAR
-            </button>
-          </div>
-        );
-      })}
-    </div>
+              <h2 className="text-xl font-bold mb-2">
+                VIP {vip.nome}
+              </h2>
 
-    {/* BENEFÍCIOS / TABELA */}
-    <div className="pt-6">
-      <VipComparisonTable />
-    </div>
+              <p className={`text-2xl font-extrabold mb-6 ${cor.price}`}>
+                R$ {vip.preco.valor.toFixed(2)}
+                {vip.preco.tipo === "mensal" && "/mês"}
+              </p>
 
-  </div>
-);
+              <button
+                onClick={() => handleComprar(vip.id)}
+                className={`w-full py-3 rounded-xl font-bold transition ${cor.button}`}
+              >
+                COMPRAR
+              </button>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* BENEFÍCIOS / TABELA */}
+      <div className="pt-6">
+        <VipComparisonTable />
+      </div>
+
+    </div>
+  );
 
 }

@@ -5,7 +5,8 @@ export default function WelcomeCard() {
         Seja bem-vindo(a) ao Maven!
       </h2>
 
-      <div className="space-y-6 text-sm text-gray-300">
+      <div className="space-y-6 text-sm sm:text-base
+ text-gray-300">
         {/* Nickname */}
         <div>
           <p className="text-red-400 font-semibold mb-1">

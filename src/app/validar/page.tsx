@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import BackgroundHeader from "@/components/backgroundheader";
 
 type Conta = {
   nick: string;
@@ -62,39 +63,44 @@ export default function ValidarPage() {
   /* 🔒 TELA DE CONTA JÁ VINCULADA */
   if (contaSalva) {
     return (
-      <div className="min-h-screen bg-[#222525] text-white flex items-center justify-center px-4">
-        <div className="bg-[#13080C] border border-white/10 rounded-2xl p-8 max-w-md w-full text-center shadow-[0_0_40px_rgba(0,0,0,0.6)]">
-          <h1 className="text-2xl font-bold mb-4">
-            Conta já vinculada
-          </h1>
+      <div className="min-h-screen  text-white">
+        <BackgroundHeader />
 
-          <p className="text-gray-300 mb-6">
-            Você já possui uma conta conectada:
-          </p>
+        <div className="flex items-center justify-center px-4 py-10 sm:py-16">
+          <div className="bg-[#13080C] border border-white/10 rounded-2xl p-8 max-w-md w-full text-center shadow-[0_0_40px_rgba(0,0,0,0.6)]">
+            <h1 className="text-2xl font-bold mb-4">
+              Conta já vinculada
+            </h1>
 
-          <div className="bg-black/30 rounded-xl p-4 mb-6">
-            <p className="font-semibold text-lg">
-              {contaSalva.nick}
+            <p className="text-gray-300 mb-6">
+              Você já possui uma conta conectada:
             </p>
-            <p className="text-sm text-gray-400">
-              Plataforma: {contaSalva.plataforma.toUpperCase()}
-            </p>
-          </div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => router.push("/")}
-              className="flex-1 py-3 rounded-xl bg-gray-600 hover:bg-gray-700 transition"
-            >
-              Voltar
-            </button>
+            <div className="bg-black/30 rounded-xl p-4 mb-6">
+              <p className="font-semibold text-lg">
+                {contaSalva.nick}
+              </p>
+              <p className="text-sm sm:text-base
+ text-gray-400">
+                Plataforma: {contaSalva.plataforma.toUpperCase()}
+              </p>
+            </div>
 
-            <button
-              onClick={trocarConta}
-              className="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 font-bold transition"
-            >
-              Trocar conta
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => router.push("/")}
+                className="flex-1 py-3 rounded-xl bg-gray-600 hover:bg-gray-700 transition"
+              >
+                Voltar
+              </button>
+
+              <button
+                onClick={trocarConta}
+                className="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 font-bold transition"
+              >
+                Trocar conta
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -103,36 +109,37 @@ export default function ValidarPage() {
 
   /* 🧾 TELA NORMAL DE VALIDAÇÃO */
   return (
-    <div className="min-h-screen bg-[#222525] text-white flex flex-col justify-between">
-      <main className="flex flex-1 items-center justify-center px-4">
+    <div className="min-h-screen bg-[#222525] text-white">
+      <BackgroundHeader/>
+
+      <main className="flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-md bg-[#13080C] border border-white/10 rounded-2xl p-8 shadow-[0_0_40px_rgba(0,0,0,0.6)]">
           <h1 className="text-2xl font-bold text-center">
             VALIDAR CONEXÃO
           </h1>
 
-          <p className="text-center text-sm text-gray-400 mt-2 mb-6">
+          <p className="text-center text-sm sm:text-base
+ text-gray-400 mt-2 mb-6">
             Insira seu nick e selecione a plataforma
           </p>
 
           <div className="grid grid-cols-2 gap-3 mb-6">
             <button
               onClick={selecionarJava}
-              className={`py-3 rounded-xl font-semibold ${
-                plataforma === "java"
+              className={`py-3 rounded-xl font-semibold ${plataforma === "java"
                   ? "bg-red-500"
                   : "bg-[#0f1623] hover:bg-[#1f2937]"
-              }`}
+                }`}
             >
               🖥️ Java
             </button>
 
             <button
               onClick={selecionarBedrock}
-              className={`py-3 rounded-xl font-semibold ${
-                plataforma === "bedrock"
+              className={`py-3 rounded-xl font-semibold ${plataforma === "bedrock"
                   ? "bg-red-500"
                   : "bg-[#0f1623] hover:bg-[#1f2937]"
-              }`}
+                }`}
             >
               📱 Bedrock
             </button>
@@ -146,7 +153,8 @@ export default function ValidarPage() {
           />
 
           {erro && (
-            <p className="text-sm text-red-400 mb-2">
+            <p className="text-sm sm:text-base
+ text-red-400 mb-2">
               ⚠️ {erro}
             </p>
           )}

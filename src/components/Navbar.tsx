@@ -23,7 +23,8 @@ export default function Navbar() {
         </Link>
 
         {/* LINKS */}
-        <div className="flex items-center gap-10 text-white text-sm font-bold">
+        <div className="flex items-center gap-10 text-white text-sm sm:text-base
+ font-bold">
           
           <Link
             href="/validar"
