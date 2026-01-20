@@ -1,52 +1,47 @@
 import Link from "next/link";
+import { ShoppingCart, Gamepad2 } from "lucide-react";
 
 export default function Navbar() {
   return (
     <nav
       className="
-        w-full h-16 flex items-center justify-between px-8
-        bg-gradient-to-r from-[#222525] via-[#14070b] to-[#0b0f16]
-        border-b border-red-500/20
+        w-full h-16
+        flex items-center
+        px-20
+        bg-[#16090B]
       "
     >
-      {/* LOGO / HOME */}
-      <Link
-        href="/"
-        className="text-xl font-extrabold text-white tracking-wide hover:text-red-400 transition"
-      >
-        MAVEN
-      </Link>
-
-      {/* LINKS */}
-      <div className="flex items-center gap-6 text-sm">
-        <Link href="/" className="text-gray-300 hover:text-white">
-          Início
-        </Link>
-
-        <Link href="/validar" className="text-gray-300 hover:text-white">
-          Jogar
-        </Link>
-      </div>
-
-      {/* AÇÕES */}
-      <div className="flex items-center gap-4">
+      {/* CONTAINER INTERNO */}
+      <div className="flex items-center gap-15">
+        
+        {/* LOGO */}
         <Link
-          href="/loja"
-          className="
-            px-4 py-2 rounded-full font-semibold
-            bg-red-500 hover:bg-green-600 text-white
-            transition
-          "
+          href="/"
+          className="text-4xl font-extrabold text-white tracking-tight"
         >
-          Loja
+          MAVEN
         </Link>
 
-        <Link
-          href="/carrinho"
-          className="text-gray-300 hover:text-white"
-        >
-          🛒 Carrinho
-        </Link>
+        {/* LINKS */}
+        <div className="flex items-center gap-10 text-white text-sm font-bold">
+          
+          <Link
+            href="/validar"
+            className="text-2xl flex items-center gap-2 hover:opacity-80 transition"
+          >
+            <Gamepad2 size={25} />
+            Jogar
+          </Link>
+
+          <Link
+            href="/loja"
+            className="text-2xl flex items-center gap-2 hover:opacity-80 transition"
+          >
+            <ShoppingCart size={25} />
+            Loja
+          </Link>
+
+        </div>
       </div>
     </nav>
   );
