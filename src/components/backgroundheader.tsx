@@ -4,14 +4,15 @@ export default function BackgroundHeader() {
   return (
     <section
       className="
-        relative w-full rounded-xl p-10
+        relative w-full
+        min-h-[160px] sm:min-h-[220px]
+        rounded-xl
         flex items-center justify-center
         overflow-hidden
         border border-red-500/20
-        min-h-[160px] sm:min-h-[220px]
       "
     >
-      {/* IMAGEM DE FUNDO */}
+      {/* FUNDO */}
       <div className="absolute inset-0 -z-10">
         <Image
           src="/bg.jpg"
@@ -23,7 +24,7 @@ export default function BackgroundHeader() {
         <div className="absolute inset-0 bg-black/60" />
       </div>
 
-      {/* LOGO CENTRAL */}
+      {/* LOGO */}
       <Image
         src="/logo.png"
         alt="Logo Maven"

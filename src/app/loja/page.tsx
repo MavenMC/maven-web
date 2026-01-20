@@ -39,17 +39,12 @@ const cores = {
 };
 
 export default function LojaPage() {
-
-  
-  
   const [conta, setConta] = useState<Conta | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const data = localStorage.getItem("maven_account");
-    if (data) {
-      setConta(JSON.parse(data));
-    }
+    if (data) setConta(JSON.parse(data));
   }, []);
 
   function handleComprar(vipId: string) {
@@ -57,9 +52,8 @@ export default function LojaPage() {
       router.push("/validar");
       return;
     }
-    
 
-    const vip = store.vips.find(v => v.id === vipId);
+    const vip = store.vips.find((v) => v.id === vipId);
     if (!vip) return;
 
     const item = {
@@ -73,22 +67,24 @@ export default function LojaPage() {
     router.push("/carrinho");
   }
 
-
   return (
     <div className="space-y-12">
       <BackgroundHeader />
 
-
       {/* AVISO */}
       {!conta && (
-        <div className="bg-[#1a0f14] border border-red-500/30 rounded-xl p-4 text-sm sm:text-base
- text-red-300">
+        <div className="bg-[#1a0f14] border border-red-500/30 rounded-xl p-4 text-sm sm:text-base text-red-300">
           ⚠️ Para comprar um VIP, é necessário validar sua conta.
         </div>
       )}
 
-      {/* CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* VIPs */}
+      <div
+        className="
+          flex gap-4 overflow-x-auto pb-4
+          sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-6
+        "
+      >
         {store.vips.map((vip) => {
           const cor = cores[vip.id as keyof typeof cores];
 
@@ -96,15 +92,16 @@ export default function LojaPage() {
             <div
               key={vip.id}
               className={`
-              bg-[#13080C]
-              border ${cor.border}
-              rounded-2xl
-              p-6
-              flex flex-col
-              items-center
-              text-center
-              ${cor.glow}
-            `}
+                min-w-[260px] sm:min-w-0
+                bg-[#13080C]
+                border ${cor.border}
+                rounded-2xl
+                p-6
+                flex flex-col
+                items-center
+                text-center
+                ${cor.glow}
+              `}
             >
               <h2 className="text-xl font-bold mb-2">
                 VIP {vip.nome}
@@ -126,12 +123,10 @@ export default function LojaPage() {
         })}
       </div>
 
-      {/* BENEFÍCIOS / TABELA */}
+      {/* BENEFÍCIOS */}
       <div className="pt-6">
         <VipComparisonTable />
       </div>
-
     </div>
   );
-
 }

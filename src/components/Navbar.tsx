@@ -3,45 +3,40 @@ import { ShoppingCart, Gamepad2 } from "lucide-react";
 
 export default function Navbar() {
   return (
-    <nav
-      className="
-        w-full h-16
-        flex items-center
-        px-20
-        bg-[#16090B]
-      "
-    >
-      {/* CONTAINER INTERNO */}
-      <div className="flex items-center gap-15">
-        
+    <nav className="w-full h-16 bg-[#16090B]">
+      <div
+        className="
+          h-full max-w-7xl mx-auto
+          flex items-center justify-between
+          px-4 sm:px-20
+        "
+      >
         {/* LOGO */}
         <Link
           href="/"
-          className="text-4xl font-extrabold text-white tracking-tight"
+          className="font-extrabold text-white tracking-tight
+                     text-xl sm:text-4xl"
         >
           MAVEN
         </Link>
 
         {/* LINKS */}
-        <div className="flex items-center gap-10 text-white text-sm sm:text-base
- font-bold">
-          
+        <div className="flex items-center gap-4 sm:gap-10 text-white font-bold">
           <Link
             href="/validar"
-            className="text-2xl flex items-center gap-2 hover:opacity-80 transition"
+            className="flex items-center gap-2 text-sm sm:text-2xl hover:opacity-80 transition"
           >
-            <Gamepad2 size={25} />
+            <Gamepad2 size={20} className="sm:w-[25px] sm:h-[25px]" />
             Jogar
           </Link>
 
           <Link
             href="/loja"
-            className="text-2xl flex items-center gap-2 hover:opacity-80 transition"
+            className="flex items-center gap-2 text-sm sm:text-2xl hover:opacity-80 transition"
           >
-            <ShoppingCart size={25} />
+            <ShoppingCart size={20} className="sm:w-[25px] sm:h-[25px]" />
             Loja
           </Link>
-
         </div>
       </div>
     </nav>

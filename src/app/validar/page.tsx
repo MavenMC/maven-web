@@ -14,10 +14,11 @@ export default function ValidarPage() {
   const [nick, setNick] = useState("");
   const [erro, setErro] = useState("");
   const [contaSalva, setContaSalva] = useState<Conta | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
-  // 🔍 verifica conta salva (SEM redirecionar)
+  /* 🔍 verifica conta salva */
   useEffect(() => {
     const data = localStorage.getItem("maven_account");
     if (data) {
@@ -35,7 +36,7 @@ export default function ValidarPage() {
     if (nick && !nick.startsWith("*")) setNick(`*${nick}`);
   }
 
-  function handleValidar() {
+  async function handleValidar() {
     setErro("");
 
     if (!plataforma || !nick) return;
@@ -45,12 +46,33 @@ export default function ValidarPage() {
       return;
     }
 
-    localStorage.setItem(
-      "maven_account",
-      JSON.stringify({ nick, plataforma })
-    );
+    setLoading(true);
 
-    router.push("/");
+    try {
+      const res = await fetch("/api/validar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nick, plataforma }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setErro("Erro ao validar no servidor.");
+        setLoading(false);
+        return;
+      }
+
+      localStorage.setItem(
+        "maven_account",
+        JSON.stringify({ nick, plataforma })
+      );
+
+      router.push("/");
+    } catch (err) {
+      setErro("Erro de conexão com o servidor.");
+      setLoading(false);
+    }
   }
 
   function trocarConta() {
@@ -60,10 +82,10 @@ export default function ValidarPage() {
     setPlataforma(null);
   }
 
-  /* 🔒 TELA DE CONTA JÁ VINCULADA */
+  /* 🔒 CONTA JÁ VINCULADA */
   if (contaSalva) {
     return (
-      <div className="min-h-screen  text-white">
+      <div className="min-h-screen text-white">
         <BackgroundHeader />
 
         <div className="flex items-center justify-center px-4 py-10 sm:py-16">
@@ -72,16 +94,11 @@ export default function ValidarPage() {
               Conta já vinculada
             </h1>
 
-            <p className="text-gray-300 mb-6">
-              Você já possui uma conta conectada:
-            </p>
-
             <div className="bg-black/30 rounded-xl p-4 mb-6">
               <p className="font-semibold text-lg">
                 {contaSalva.nick}
               </p>
-              <p className="text-sm sm:text-base
- text-gray-400">
+              <p className="text-sm text-gray-400">
                 Plataforma: {contaSalva.plataforma.toUpperCase()}
               </p>
             </div>
@@ -89,14 +106,14 @@ export default function ValidarPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => router.push("/")}
-                className="flex-1 py-3 rounded-xl bg-gray-600 hover:bg-gray-700 transition"
+                className="flex-1 py-3 rounded-xl bg-gray-600 hover:bg-gray-700"
               >
                 Voltar
               </button>
 
               <button
                 onClick={trocarConta}
-                className="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 font-bold transition"
+                className="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 font-bold"
               >
                 Trocar conta
               </button>
@@ -107,10 +124,10 @@ export default function ValidarPage() {
     );
   }
 
-  /* 🧾 TELA NORMAL DE VALIDAÇÃO */
+  /* 🧾 TELA DE VALIDAÇÃO */
   return (
     <div className="min-h-screen bg-[#222525] text-white">
-      <BackgroundHeader/>
+      <BackgroundHeader />
 
       <main className="flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-md bg-[#13080C] border border-white/10 rounded-2xl p-8 shadow-[0_0_40px_rgba(0,0,0,0.6)]">
@@ -118,28 +135,29 @@ export default function ValidarPage() {
             VALIDAR CONEXÃO
           </h1>
 
-          <p className="text-center text-sm sm:text-base
- text-gray-400 mt-2 mb-6">
+          <p className="text-center text-gray-400 mt-2 mb-6">
             Insira seu nick e selecione a plataforma
           </p>
 
           <div className="grid grid-cols-2 gap-3 mb-6">
             <button
               onClick={selecionarJava}
-              className={`py-3 rounded-xl font-semibold ${plataforma === "java"
+              className={`py-3 rounded-xl font-semibold ${
+                plataforma === "java"
                   ? "bg-red-500"
                   : "bg-[#0f1623] hover:bg-[#1f2937]"
-                }`}
+              }`}
             >
               🖥️ Java
             </button>
 
             <button
               onClick={selecionarBedrock}
-              className={`py-3 rounded-xl font-semibold ${plataforma === "bedrock"
+              className={`py-3 rounded-xl font-semibold ${
+                plataforma === "bedrock"
                   ? "bg-red-500"
                   : "bg-[#0f1623] hover:bg-[#1f2937]"
-                }`}
+              }`}
             >
               📱 Bedrock
             </button>
@@ -153,18 +171,17 @@ export default function ValidarPage() {
           />
 
           {erro && (
-            <p className="text-sm sm:text-base
- text-red-400 mb-2">
+            <p className="text-sm text-red-400 mb-2">
               ⚠️ {erro}
             </p>
           )}
 
           <button
             onClick={handleValidar}
-            disabled={!plataforma || !nick}
+            disabled={!plataforma || !nick || loading}
             className="w-full mt-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 font-bold disabled:bg-gray-600"
           >
-            VALIDAR
+            {loading ? "VALIDANDO..." : "VALIDAR"}
           </button>
         </div>
       </main>
