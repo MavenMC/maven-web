@@ -37,43 +37,39 @@ export default function ValidarPage() {
   }
 
   async function handleValidar() {
-    setErro("");
+  setErro("");
 
-    if (!plataforma || !nick) return;
+  if (!plataforma || !nick) return;
 
-    if (plataforma === "bedrock" && !nick.startsWith("*")) {
-      setErro("Jogadores Bedrock devem iniciar o nick com *");
+  try {
+    const res = await fetch("/api/validar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nick,
+        plataforma,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setErro(data.error || "Erro ao validar");
       return;
     }
 
-    setLoading(true);
+    localStorage.setItem(
+      "maven_account",
+      JSON.stringify({ nick, plataforma })
+    );
 
-    try {
-      const res = await fetch("/api/validar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nick, plataforma }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        setErro("Erro ao validar no servidor.");
-        setLoading(false);
-        return;
-      }
-
-      localStorage.setItem(
-        "maven_account",
-        JSON.stringify({ nick, plataforma })
-      );
-
-      router.push("/");
-    } catch (err) {
-      setErro("Erro de conexão com o servidor.");
-      setLoading(false);
-    }
+    router.push("/");
+  } catch {
+    setErro("Erro de conexão com o servidor");
   }
+}
 
   function trocarConta() {
     localStorage.removeItem("maven_account");
