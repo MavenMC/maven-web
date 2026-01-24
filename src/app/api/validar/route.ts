@@ -9,9 +9,9 @@ type Body = {
 
 export async function POST(req: Request) {
   try {
-    const body: Body = await req.json();
-    const { nick, plataforma } = body;
+    const { nick, plataforma }: Body = await req.json();
 
+    // validações básicas
     if (!nick || !plataforma) {
       return NextResponse.json(
         { error: "Dados inválidos" },
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
       );
     }
 
+    // 🔗 chamada SERVER → SERVER (permitido)
     const res = await fetch(
       "http://sp-13.magnohost.com.br:25501/validate",
       {
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("ERRO API VALIDAR:", err);
     return NextResponse.json(
-      { error: "Erro ao conectar com o servidor" },
+      { error: "Erro interno ao validar" },
       { status: 500 }
     );
   }

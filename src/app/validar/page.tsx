@@ -61,7 +61,6 @@ export default function ValidarPage() {
 
       if (!res.ok) {
         setErro(data.error || "Erro ao validar");
-        setLoading(false);
         return;
       }
 
@@ -146,20 +145,22 @@ export default function ValidarPage() {
           <div className="grid grid-cols-2 gap-3 mb-6">
             <button
               onClick={selecionarJava}
-              className={`py-3 rounded-xl font-semibold ${plataforma === "java"
-                ? "bg-red-500"
-                : "bg-[#0f1623] hover:bg-[#1f2937]"
-                }`}
+              className={`py-3 rounded-xl font-semibold ${
+                plataforma === "java"
+                  ? "bg-red-500"
+                  : "bg-[#0f1623] hover:bg-[#1f2937]"
+              }`}
             >
               🖥️ Java
             </button>
 
             <button
               onClick={selecionarBedrock}
-              className={`py-3 rounded-xl font-semibold ${plataforma === "bedrock"
-                ? "bg-red-500"
-                : "bg-[#0f1623] hover:bg-[#1f2937]"
-                }`}
+              className={`py-3 rounded-xl font-semibold ${
+                plataforma === "bedrock"
+                  ? "bg-red-500"
+                  : "bg-[#0f1623] hover:bg-[#1f2937]"
+              }`}
             >
               📱 Bedrock
             </button>
