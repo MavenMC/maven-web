@@ -38,13 +38,14 @@ export default function ValidarPage() {
 
   async function handleValidar() {
     setErro("");
+    setLoading(true);
 
-    if (!plataforma || !nick) return;
+    if (!plataforma || !nick) {
+      setLoading(false);
+      return;
+    }
 
     try {
-      setLoading(true);
-
-      // ✅ CHAMADA APENAS PARA A API DO SITE (HTTPS)
       const res = await fetch("/api/validar", {
         method: "POST",
         headers: {
@@ -58,11 +59,11 @@ export default function ValidarPage() {
 
       const data = await res.json();
 
-      if (!res.ok || !data.success) {
+      if (!res.ok) {
         setErro(data.error || "Erro ao validar");
+        setLoading(false);
         return;
       }
-
 
       localStorage.setItem(
         "maven_account",
@@ -70,7 +71,8 @@ export default function ValidarPage() {
       );
 
       router.push("/");
-    } catch {
+    } catch (err) {
+      console.error(err);
       setErro("Erro de conexão com o servidor");
     } finally {
       setLoading(false);
@@ -145,8 +147,8 @@ export default function ValidarPage() {
             <button
               onClick={selecionarJava}
               className={`py-3 rounded-xl font-semibold ${plataforma === "java"
-                  ? "bg-red-500"
-                  : "bg-[#0f1623] hover:bg-[#1f2937]"
+                ? "bg-red-500"
+                : "bg-[#0f1623] hover:bg-[#1f2937]"
                 }`}
             >
               🖥️ Java
@@ -155,8 +157,8 @@ export default function ValidarPage() {
             <button
               onClick={selecionarBedrock}
               className={`py-3 rounded-xl font-semibold ${plataforma === "bedrock"
-                  ? "bg-red-500"
-                  : "bg-[#0f1623] hover:bg-[#1f2937]"
+                ? "bg-red-500"
+                : "bg-[#0f1623] hover:bg-[#1f2937]"
                 }`}
             >
               📱 Bedrock
