@@ -1,0 +1,24 @@
+# Dependencies and Build Outputs
+node_modules/
+.next/
+out/
+build/
+
+# IDEs and Editors
+.idea/
+.vscode/
+
+# Environment Variables
+.env
+.env.local
+
+# Project Files
+.git/
+.github/
+.gitignore
+.dockerignore
+.discloudignore
+discloud.config
+vercel.json
+.vercel/
+README.md

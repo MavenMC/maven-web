@@ -1,0 +1,21 @@
+# Local Build and Dependencies
+node_modules/
+.next/
+out/
+build/
+
+# Source Control
+.git/
+.github/
+
+# IDEs
+.idea/
+.vscode/
+
+# Project Metadata and Config
+.gitignore
+.env.example
+.discloudignore
+vercel.json
+.vercel/
+README.md

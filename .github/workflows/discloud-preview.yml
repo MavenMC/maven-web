@@ -1,0 +1,33 @@
+name: Discloud Preview Deploy
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Create Zip
+        run: |
+          zip -r deploy.zip . \
+          -x "*.git*" \
+          -x "node_modules/*" \
+          -x ".next/*" \
+          -x "*.env*" \
+          -x "bun.lockb" \
+          -x ".github/*" \
+          -x "out/*"
+
+      - name: Discloud App Commit (Preview)
+        uses: marco-quicula/discloud-api-action@v0.1.1
+        with:
+          discloud_api_token: ${{ secrets.DISCLOUD_API_TOKEN_DEVELOP || secrets.DISCLOUD_API_TOKEN }}
+          command: "app-commit"
+          appId: "maven-website-preview"
+          file: "deploy.zip"
