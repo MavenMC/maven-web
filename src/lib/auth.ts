@@ -13,6 +13,12 @@ type PlayerAccountRow = {
   verified: number | null;
 };
 
+type AdminAccessRow = {
+  discord_id: string;
+  is_active: number;
+  access_level: string;
+};
+
 const Discord = (DiscordProvider as unknown as { default?: typeof DiscordProvider }).default ?? DiscordProvider;
 
 async function getPlayerByDiscordId(discordId: string) {
@@ -29,6 +35,21 @@ async function getPlayerByEmail(email: string) {
     { email },
   );
   return rows[0] ?? null;
+}
+
+async function checkAdminAccess(discordId: string) {
+  const rows = await dbQuery<AdminAccessRow[]>(
+    "SELECT discord_id, is_active, access_level FROM admin_access WHERE discord_id = :discord_id AND is_active = 1 LIMIT 1",
+    { discord_id: discordId },
+  );
+  return rows[0] ?? null;
+}
+
+async function updateAdminLastLogin(discordId: string) {
+  await dbQuery(
+    "UPDATE admin_access SET last_login = NOW() WHERE discord_id = :discord_id",
+    { discord_id: discordId },
+  );
 }
 
 async function ensurePlayerIdentity({
@@ -117,7 +138,20 @@ export const authOptions: NextAuthOptions = {
   ],
   session: { strategy: "jwt" },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger }) {
+      // Sempre revalidar admin access em cada requisição
+      if (trigger === "update" || token.playerId) {
+        const playerId = token.playerId as string;
+        if (playerId) {
+          const adminAccess = await checkAdminAccess(playerId);
+          if (adminAccess) {
+            (token as typeof token & { adminId?: string }).adminId = playerId;
+          } else {
+            delete (token as typeof token & { adminId?: string }).adminId;
+          }
+        }
+      }
+
       if (account?.provider === "discord" && account.providerAccountId) {
         const playerId = await ensurePlayerIdentity({
           providerAccountId: String(account.providerAccountId),
@@ -127,8 +161,16 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (playerId) {
-          (token as typeof token & { role?: string; playerId?: string }).role = "player";
-          (token as typeof token & { role?: string; playerId?: string }).playerId = playerId;
+          (token as typeof token & { role?: string; playerId?: string; adminId?: string }).role = "player";
+          (token as typeof token & { role?: string; playerId?: string; adminId?: string }).playerId = playerId;
+
+          // Check if user has admin access in database
+          const adminAccess = await checkAdminAccess(playerId);
+          if (adminAccess) {
+            (token as typeof token & { role?: string; playerId?: string; adminId?: string }).adminId = playerId;
+            // Update last login timestamp
+            await updateAdminLastLogin(playerId).catch(() => undefined);
+          }
 
           try {
             const player = await getPlayerByDiscordId(playerId);
@@ -145,9 +187,10 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        const typedToken = token as typeof token & { role?: string; playerId?: string };
+        const typedToken = token as typeof token & { role?: string; playerId?: string; adminId?: string };
         if (typedToken.role) session.user.role = typedToken.role;
         if (typedToken.playerId) session.user.playerId = typedToken.playerId;
+        if (typedToken.adminId) session.user.adminId = typedToken.adminId;
       }
       return session;
     },

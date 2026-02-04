@@ -1,8 +1,11 @@
 import { dbQuery } from "@/lib/db";
+import { requireAdmin } from "@/lib/admin";
 
 type CountRow = { total: number };
 
 export default async function AdminDashboard() {
+  await requireAdmin();
+  
   const [posts] = await dbQuery<CountRow[]>(
     "SELECT COUNT(*) as total FROM site_posts",
   );

@@ -20,6 +20,7 @@ function truncateMiddle(value: string) {
 export default function ContaConectada() {
   const { data: session, status } = useSession();
   const [player, setPlayer] = useState<PlayerInfo | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (!session?.user?.playerId) return;
@@ -80,19 +81,44 @@ export default function ContaConectada() {
   const avatarSrc = minecraftName
     ? `https://mc-heads.net/avatar/${encodeURIComponent(minecraftName)}/64`
     : session.user?.image || "https://mc-heads.net/avatar/steve/64";
+  const isAdmin = !!session.user?.adminId;
 
   return (
-    <button
-      type="button"
-      onClick={() => signOut({ callbackUrl: "/" })}
-      className="btn-header-account"
-      title={baseName}
-    >
-      <img src={avatarSrc} alt={baseName} className="account-avatar" />
-      <div className="account-info">
-        <h3>{displayName}</h3>
-        <p>Clique para sair</p>
-      </div>
-    </button>
+    <div className="account-dropdown">
+      <button
+        type="button"
+        onClick={() => setDropdownOpen(!dropdownOpen)}
+        className="btn-header-account"
+        title={baseName}
+      >
+        <img src={avatarSrc} alt={baseName} className="account-avatar" />
+        <div className="account-info">
+          <h3>{displayName}</h3>
+          <p>Ver opções</p>
+        </div>
+      </button>
+      
+      {dropdownOpen && (
+        <div className="account-dropdown-menu">
+          <Link href="/perfil" onClick={() => setDropdownOpen(false)}>
+            Meu Perfil
+          </Link>
+          {isAdmin && (
+            <Link href="/admin" onClick={() => setDropdownOpen(false)} className="admin-link">
+              Painel Admin
+            </Link>
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              setDropdownOpen(false);
+              signOut({ callbackUrl: "/" });
+            }}
+          >
+            Sair
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
