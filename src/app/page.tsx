@@ -34,7 +34,7 @@ export default async function Home() {
   ]);
 
   const membersOnline =
-    discord.membersOnline === null ? "-" : discord.membersOnline.toLocaleString("pt-BR");
+  discord.membersOnline === null ? "-" : discord.membersOnline.toLocaleString("pt-BR");
   const primarySocials = socialLinks.slice(0, 4);
 
   const parseItems = (itemsJson: string | null) => {
@@ -176,7 +176,7 @@ export default async function Home() {
               <div className="discord-widget-top">
                 <div className="discord-widget-meta">
                   <div className="discord-widget-icon">
-                    <Users className="icon" />
+                    <Users className="icon"/>
                   </div>
                   <div>
                     <div className="discord-widget-count">{membersOnline}</div>
