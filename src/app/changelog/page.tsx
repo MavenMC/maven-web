@@ -1,10 +1,20 @@
 ﻿import Link from "next/link";
 import { Clock } from "lucide-react";
-import { getChangelogEntries } from "@/lib/site-data";
+import { getChangelogEntries, getStaffChanges } from "@/lib/site-data";
 import { formatShortDate } from "@/lib/date";
 
 export default async function ChangelogPage() {
-  const changelogItems = await getChangelogEntries();
+  const [changelogItems, staffChanges] = await Promise.all([
+    getChangelogEntries(),
+    getStaffChanges(),
+  ]);
+
+
+  const formatAction = (action: string) => {
+    if (action === "join") return "Entrou";
+    if (action === "leave") return "Saiu";
+    return action;
+  };
 
   const parseItems = (itemsJson: string | null) => {
     if (!itemsJson) return [];
@@ -57,6 +67,37 @@ export default async function ChangelogPage() {
             <div className="service-icon plane">
               <Clock />
             </div>
+          </div>
+
+
+          <div className="section-header">
+            <div>
+              <span className="section-kicker">Equipe</span>
+              <h2>Movimentacoes da equipe</h2>
+              <p className="muted">Entradas e saidas registradas pela administracao.</p>
+            </div>
+          </div>
+
+          <div className="staff-change-grid">
+            {staffChanges.length ? (
+              staffChanges.map((change) => (
+                <article key={change.id} className="card staff-change-card">
+                  <span className="card-eyebrow">
+                    {formatShortDate(change.happened_at) || "Sem data"} - {formatAction(change.action)}
+                  </span>
+                  <h3 className="card-title">{change.member_name}</h3>
+                  <p className="card-sub">
+                    {change.role_name ? `Cargo: ${change.role_name}` : "Cargo nao informado"}
+                  </p>
+                  {change.note && <p className="muted">{change.note}</p>}
+                </article>
+              ))
+            ) : (
+              <div className="card">
+                <h3>Sem movimentacoes</h3>
+                <p className="muted">Nenhuma entrada registrada ainda.</p>
+              </div>
+            )}
           </div>
 
           <div className="category-grid">

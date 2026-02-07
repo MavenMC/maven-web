@@ -52,7 +52,7 @@ export default function Hero() {
 
       {/* CONECTAR */}
       <Link
-        href="/validar"
+        href="/perfil#vinculo"
         className="
           order-2 sm:order-1
           flex items-center gap-3

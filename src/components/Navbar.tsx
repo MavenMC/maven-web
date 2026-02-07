@@ -13,8 +13,16 @@ const navLinks = [
       { label: "Blog", href: "/blog" },
     ]
   },
-  { label: "Equipe", href: "/equipe" },
-  { label: "Changelog", href: "/changelog" },
+  {
+    label: "Equipe",
+    dropdown: [
+      { label: "Equipe", href: "/equipe" },
+      { label: "Change-log", href: "/changelog" },
+      { label: "Trabalhe Conosco", href: "/trabalhe-conosco" },
+    ],
+  },
+  { label: "Ranking", href: "/rankings" },
+  { label: "Punicoes", href: "/punicoes" },
   { label: "Fórum", href: "/forum" },
 ];
 
@@ -26,16 +34,10 @@ export default function Navbar() {
   return (
     <header className="nav">
       <div className="container nav-inner">
-        <div className="logo-glow" aria-hidden="true" />
-
         <Link href="/" className="logo" onClick={closeMobile}>
-          <img src="/logos/slogan.png" alt="Maven Network" className="logo-mark" />
-          <img
-            src="/logos/favicon-rounded.png"
-            alt=""
-            className="logo-mark-small"
-            aria-hidden="true"
-          />
+          <img className="logo-nav" src="/logos/slogan.png" alt="Maven" />
+          <img className="logo-mark-small" src="/logos/favicon.png" alt="Maven" />
+          <span className="logo-text">Network</span>
         </Link>
 
         <nav className="nav-links" aria-label="Seções do site">
@@ -99,7 +101,7 @@ export default function Navbar() {
                 </Link>
               )
             ))}
-            <Link href="/validar" onClick={closeMobile}>
+            <Link href="/perfil#vinculo" onClick={closeMobile}>
               Jogar
             </Link>
             <a

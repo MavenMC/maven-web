@@ -1,6 +1,8 @@
 import { revalidatePath } from "next/cache";
 import { dbQuery } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin";
+import { createAdminLinkToken } from "@/lib/admin-link";
+import LinkDiscordButton from "@/app/admin/admins/link-discord-button";
 
 type PlayerRow = {
   discord_id: string;
@@ -83,7 +85,13 @@ async function revokeAdmin(formData: FormData) {
 }
 
 export default async function AdminAdminsPage() {
-  await requireAdmin();
+  const session = await requireAdmin();
+  const linkToken = session.user?.adminId && !session.user?.playerId
+    ? await createAdminLinkToken({
+        adminId: session.user.adminId,
+        role: session.user.role ?? "admin",
+      })
+    : null;
   const players = await getAllPlayers();
 
   const admins = players.filter(p => p.is_admin === 1);
@@ -136,6 +144,23 @@ export default async function AdminAdminsPage() {
           </div>
         )}
       </section>
+
+      {linkToken ? (
+        <section className="admin-section">
+          <h2 className="section-title">Vincular Discord</h2>
+          <div className="card admin-user-card">
+            <div className="admin-user-details">
+              <h3>Vincule sua conta Discord</h3>
+              <p className="muted">
+                Depois do vinculo, o login apenas com Discord ja libera o painel.
+              </p>
+            </div>
+            <div className="admin-user-actions">
+              <LinkDiscordButton linkToken={linkToken} />
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="admin-section">
         <h2 className="section-title">Usuários com Discord Vinculado ({nonAdmins.length})</h2>

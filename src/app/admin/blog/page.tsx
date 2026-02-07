@@ -2,11 +2,14 @@ import { revalidatePath } from "next/cache";
 import { dbQuery } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin";
 import { formatDateInput } from "@/lib/date";
+import { buildSummary, resolveCoverLabel } from "@/lib/post-utils";
 
 type PostRow = {
   id: number;
   title: string;
   summary: string | null;
+  content: string | null;
+  tag: string | null;
   cover: string | null;
   cover_label: string | null;
   published_at: Date | string | null;
@@ -14,59 +17,70 @@ type PostRow = {
   active: number;
 };
 
+
 async function getPosts() {
   return dbQuery<PostRow[]>(
-    "SELECT id, title, summary, cover, cover_label, published_at, sort_order, active FROM site_posts WHERE type = 'blog' ORDER BY published_at DESC, sort_order ASC, id DESC",
+    "SELECT id, title, summary, content, tag, cover, cover_label, published_at, sort_order, active FROM site_posts WHERE type = 'blog' ORDER BY published_at DESC, sort_order ASC, id DESC",
   );
 }
 
 async function createPost(formData: FormData) {
-  \"use server\";
+  "use server";
   await requireAdmin();
 
-  const title = String(formData.get(\"title\") || \"\").trim();
-  const summary = String(formData.get(\"summary\") || \"\").trim() || null;
-  const cover = String(formData.get(\"cover\") || \"\").trim() || null;
-  const coverLabel = String(formData.get(\"cover_label\") || \"\").trim() || null;
-  const publishedAt = String(formData.get(\"published_at\") || \"\").trim() || null;
-  const sortOrder = Number(formData.get(\"sort_order\") || 0);
-  const active = formData.get(\"active\") === \"on\" ? 1 : 0;
+  const title = String(formData.get("title") || "").trim();
+  const summary = String(formData.get("summary") || "").trim() || null;
+  const content = String(formData.get("content") || "").trim() || null;
+  const tag = String(formData.get("tag") || "").trim() || null;
+  const cover = String(formData.get("cover") || "").trim() || null;
+  const coverLabel = String(formData.get("cover_label") || "").trim() || null;
+  const publishedAt = String(formData.get("published_at") || "").trim() || null;
+  const sortOrder = Number(formData.get("sort_order") || 0);
+  const active = formData.get("active") === "on" ? 1 : 0;
+  const resolvedSummary = buildSummary(summary, content);
+  const resolvedCoverLabel = resolveCoverLabel(coverLabel, tag);
+  const resolvedPublishedAt = publishedAt || new Date().toISOString().slice(0, 10);
 
   if (!title) return;
 
   await dbQuery(
     `INSERT INTO site_posts
-      (type, title, summary, cover, cover_label, published_at, sort_order, active)
+      (type, title, summary, content, tag, cover, cover_label, published_at, sort_order, active)
      VALUES
-      ('blog', :title, :summary, :cover, :cover_label, :published_at, :sort_order, :active)`,
+      ('blog', :title, :summary, :content, :tag, :cover, :cover_label, :published_at, :sort_order, :active)`,
     {
       title,
-      summary,
+      summary: resolvedSummary,
+      content,
+      tag,
       cover,
-      cover_label: coverLabel,
-      published_at: publishedAt || null,
+      cover_label: resolvedCoverLabel,
+      published_at: resolvedPublishedAt,
       sort_order: sortOrder,
       active,
     },
   );
 
-  revalidatePath(\"/blog\");
-  revalidatePath(\"/admin/blog\");
-  revalidatePath(\"/\");
+  revalidatePath("/blog");
+  revalidatePath("/admin/blog");
+  revalidatePath("/");
 }
 
 async function updatePost(formData: FormData) {
-  \"use server\";
+  "use server";
   await requireAdmin();
 
-  const id = Number(formData.get(\"id\"));
-  const title = String(formData.get(\"title\") || \"\").trim();
-  const summary = String(formData.get(\"summary\") || \"\").trim() || null;
-  const cover = String(formData.get(\"cover\") || \"\").trim() || null;
-  const coverLabel = String(formData.get(\"cover_label\") || \"\").trim() || null;
-  const publishedAt = String(formData.get(\"published_at\") || \"\").trim() || null;
-  const sortOrder = Number(formData.get(\"sort_order\") || 0);
-  const active = formData.get(\"active\") === \"on\" ? 1 : 0;
+  const id = Number(formData.get("id"));
+  const title = String(formData.get("title") || "").trim();
+  const summary = String(formData.get("summary") || "").trim() || null;
+  const content = String(formData.get("content") || "").trim() || null;
+  const tag = String(formData.get("tag") || "").trim() || null;
+  const cover = String(formData.get("cover") || "").trim() || null;
+  const coverLabel = String(formData.get("cover_label") || "").trim() || null;
+  const publishedAt = String(formData.get("published_at") || "").trim() || null;
+  const sortOrder = Number(formData.get("sort_order") || 0);
+  const active = formData.get("active") === "on" ? 1 : 0;
+  const resolvedSummary = buildSummary(summary, content);
 
   if (!id || !title) return;
 
@@ -74,6 +88,8 @@ async function updatePost(formData: FormData) {
     `UPDATE site_posts
      SET title = :title,
          summary = :summary,
+         content = :content,
+         tag = :tag,
          cover = :cover,
          cover_label = :cover_label,
          published_at = :published_at,
@@ -83,7 +99,9 @@ async function updatePost(formData: FormData) {
     {
       id,
       title,
-      summary,
+      summary: resolvedSummary,
+      content,
+      tag,
       cover,
       cover_label: coverLabel,
       published_at: publishedAt || null,
@@ -92,9 +110,9 @@ async function updatePost(formData: FormData) {
     },
   );
 
-  revalidatePath(\"/blog\");
-  revalidatePath(\"/admin/blog\");
-  revalidatePath(\"/\");
+  revalidatePath("/blog");
+  revalidatePath("/admin/blog");
+  revalidatePath("/");
 }
 
 async function deletePost(formData: FormData) {
@@ -131,8 +149,16 @@ export default async function AdminBlogPage() {
               <textarea name=\"summary\" rows={3} />
             </label>
             <label>
-              Capa (academy, holiday, discord, patch)
-              <input name=\"cover\" placeholder=\"academy\" />
+              Tag
+              <input name="tag" placeholder="GUIA" />
+            </label>
+            <label>
+              Conteudo
+              <textarea name="content" rows={8} placeholder="Escreva o post aqui..." />
+            </label>
+            <label>
+              Capa (preset ou URL)
+              <input name=\"cover\" placeholder=\"academy ou /uploads/blog/capa.jpg\" />
             </label>
             <label>
               Label da capa
@@ -172,7 +198,15 @@ export default async function AdminBlogPage() {
                     <textarea name=\"summary\" rows={3} defaultValue={post.summary ?? \"\"} />
                   </label>
                   <label>
-                    Capa
+                    Tag
+                    <input name="tag" defaultValue={post.tag ?? ""} />
+                  </label>
+                  <label>
+                    Conteudo
+                    <textarea name="content" rows={8} defaultValue={post.content ?? ""} />
+                  </label>
+                  <label>
+                    Capa (preset ou URL)
                     <input name=\"cover\" defaultValue={post.cover ?? \"\"} />
                   </label>
                   <label>

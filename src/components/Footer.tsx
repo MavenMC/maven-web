@@ -38,7 +38,10 @@ export default async function Footer() {
               <Link className="footer-link" href="/blog">
                 Blog
               </Link>
-              <Link className="footer-link" href="/validar">
+              <Link className="footer-link" href="/trabalhe-conosco">
+                Trabalhe Conosco
+              </Link>
+              <Link className="footer-link" href="/perfil#vinculo">
                 Jogar
               </Link>
             </div>
@@ -59,13 +62,33 @@ export default async function Footer() {
 
         <div className="footer-bottom">
           <div className="footer-bottom-inner">
-            <span>© {new Date().getFullYear()} MavenMC. Todos os direitos reservados.</span>
+            <span className="footer-credit">
+              {" "}
+              <span className="developer-credit">
+                Maven Network 
+                <span className="developer-card">
+                  <img
+                    src="https://mc-heads.net/avatar/Nickz1n/64"
+                    alt="Nickz1n"
+                    className="developer-avatar"
+                  />
+                  <span className="developer-info">
+                    <span className="developer-badge">CEO</span>
+                    <span className="developer-name">Nickz1n</span>
+                  </span>
+                </span>
+              </span> 
+                <span> © {new Date().getFullYear()} ― Todos os direitos reservados.</span>
+            </span>
             <div className="footer-links">
               <Link href="/termos">Termos de Uso</Link>
               <span>•</span>
               <Link href="/privacidade">Privacidade</Link>
             </div>
           </div>
+        </div>
+        <div className="footer-disclaimer">
+          <p>Maven não é um serviço oficial, afiliado ou associado à Microsoft ou Mojang AB</p>
         </div>
       </div>
     </footer>

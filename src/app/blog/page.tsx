@@ -1,6 +1,7 @@
 ﻿import Link from "next/link";
 import { getSitePosts } from "@/lib/site-data";
 import { formatShortDate } from "@/lib/date";
+import { getPostCoverProps } from "@/lib/post-cover";
 
 export default async function BlogPage() {
   const blogPosts = await getSitePosts("blog");
@@ -19,7 +20,7 @@ export default async function BlogPage() {
             {blogPosts.length ? (
               blogPosts.map((post) => (
                 <article key={post.id} className="card blog-card">
-                  <div className={`blog-cover ${post.cover ?? ""}`}>
+                  <div className={getPostCoverProps(post.cover).className} style={getPostCoverProps(post.cover).style}>
                     {post.cover_label || post.tag || "BLOG"}
                   </div>
                   <div>
@@ -29,8 +30,8 @@ export default async function BlogPage() {
                     <h3 className="card-title">{post.title}</h3>
                     <p className="card-sub">{post.summary ?? "Conteúdo novo no blog."}</p>
                   </div>
-                  <Link href="/forum" className="btn ghost btn-sm">
-                    Ler no fórum
+                  <Link href={`/blog/${post.id}`} className="btn ghost btn-sm">
+                    Ler artigo
                   </Link>
                 </article>
               ))

@@ -1,223 +1,156 @@
-"use client";
-
-import Image from "next/image";
 import { Users } from "lucide-react";
-import staffData from "@/data/staff.json";
+import { dbQuery } from "@/lib/db";
+import { resolveIcon } from "@/lib/icon-map";
 
-// Função helper para gerar URLs dos avatares
+type RoleRow = {
+  id: number;
+  slug: string;
+  name: string;
+  icon: string | null;
+  color: string;
+  sort_order: number;
+};
+
+type MemberRow = {
+  id: number;
+  role_id: number;
+  name: string;
+  minecraft: string;
+  minecraft_uuid: string | null;
+  responsibility: string | null;
+  sort_order: number;
+};
+
 function getMinecraftAvatar(username: string): string {
   return `https://minotar.net/helm/${username}/128`;
 }
 
-function getDiscordAvatar(userId: string, hash: string): string {
-  return `https://cdn.discordapp.com/avatars/${userId}/${hash}.${hash.startsWith('a_') ? 'gif' : 'png'}`;
+function getMinecraftHead3d(uuid: string): string {
+  return `https://mc-heads.net/head/${uuid}/512`;
 }
 
-export default function EquipePage() {
+async function getStaffData() {
+  const roles = await dbQuery<RoleRow[]>(
+    "SELECT id, slug, name, icon, color, sort_order FROM site_staff_roles WHERE active = 1 ORDER BY sort_order ASC, id ASC",
+  );
+  const members = await dbQuery<MemberRow[]>(
+    `SELECT m.id,
+            m.role_id,
+            m.name,
+            m.minecraft,
+            m.minecraft_uuid,
+            m.responsibility,
+            m.sort_order
+     FROM site_staff_members m
+     WHERE m.active = 1
+     ORDER BY m.sort_order ASC, m.id ASC`,
+  );
+
+  return roles.map((role) => ({
+    ...role,
+    members: members.filter((member) => member.role_id === role.id),
+  }));
+}
+
+export default async function EquipePage() {
+  const staffRoles = await getStaffData();
+
   return (
-    <>
-      <section className="section">
-        <div className="container">
-          {/* Page Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-sky/10 mb-4">
-              <Users className="w-8 h-8 text-brand-sky" aria-hidden="true" />
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">
+    <section className="section">
+      <div className="container">
+        <div className="team-hero">
+          <div className="team-hero-badge" aria-hidden="true">
+            <Users className="team-hero-icon" />
+          </div>
+          <div>
+            <h1 className="team-hero-title">
               Nossa <span className="text-brand-sky">Equipe</span>
             </h1>
-            <p className="text-lg text-gray-600">
-              Conheça nosso time de staff
-            </p>
-          </div>
-
-          {/* Roles Grid - Cards lado a lado */}
-          <div className="flex flex-wrap gap-4">
-            {staffData.roles.map((role) => (
-              <div key={role.id} className="card flex-1 min-w-[280px]">
-                {/* Role Header */}
-                <div 
-                  className="p-4 rounded-t-lg flex items-center gap-2"
-                  style={{ 
-                    backgroundColor: `${role.color}15`,
-                    borderBottom: `2px solid ${role.color}`
-                  }}
-                >
-                  <div
-                    className="w-6 h-6 flex items-center justify-center"
-                    style={{ 
-                      fontSize: '20px',
-                      filter: `drop-shadow(0 0 3px ${role.color})`
-                    }}
-                  >
-                    {role.id === 'admin' && '👑'}
-                    {role.id === 'srmod' && '⭐'}
-                    {role.id === 'mod' && '🛡️'}
-                    {role.id === 'helper' && '💬'}
-                    {role.id === 'artisan' && '🎨'}
-                  </div>
-                  <div className="flex-1">
-                    <h2 
-                      className="text-lg font-bold"
-                      style={{ color: role.color }}
-                    >
-                      {role.name}
-                    </h2>
-                    <p className="text-xs text-gray-600">
-                      {role.members.length} {role.members.length === 1 ? "membro" : "membros"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Members Cards - Estilo moderno */}
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '20px', padding: '12px', overflowX: 'auto' }}>
-                  {role.members.map((member) => {
-                    const minecraftAvatar = getMinecraftAvatar(member.minecraft);
-                    const discordAvatar = member.discord && member.discordHash 
-                      ? getDiscordAvatar(member.discord, member.discordHash)
-                      : null;
-
-                    return (
-                      <div
-                        key={member.id}
-                        className="staff-member-card"
-                        style={{ 
-                          width: '180px',
-                          minWidth: '180px',
-                          background: 'rgb(30, 33, 48)',
-                          borderRadius: '8px',
-                          overflow: 'hidden',
-                          boxShadow: '7px 5px 10px rgba(0, 0, 0, 0.333)',
-                          transition: 'transform 0.3s ease, box-shadow 0.3s ease'
-                        }}
-                      >
-                        {/* Header com cor do cargo */}
-                        <div style={{ 
-                          height: '80px', 
-                          backgroundColor: role.color,
-                          position: 'relative',
-                          padding: '12px'
-                        }}>
-                          {/* Avatar */}
-                          <div style={{
-                            position: 'absolute',
-                            top: '12px',
-                            left: '12px'
-                          }}>
-                            <Image
-                              src={minecraftAvatar}
-                              alt={member.name}
-                              width={56}
-                              height={56}
-                              style={{ 
-                                imageRendering: "pixelated",
-                                borderRadius: '8px',
-                                backgroundColor: 'rgb(40, 44, 66)',
-                                border: '2px solid rgb(30, 33, 48)'
-                              }}
-                            />
-                          </div>
-
-                          {/* Nome e @ */}
-                          <div style={{
-                            position: 'absolute',
-                            top: '20px',
-                            left: '80px',
-                            right: '12px'
-                          }}>
-                            <div style={{
-                              backgroundColor: 'rgb(40, 44, 66)',
-                              color: 'white',
-                              fontSize: '14px',
-                              fontWeight: 'bold',
-                              padding: '4px 8px',
-                              borderRadius: '4px',
-                              marginBottom: '6px',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap'
-                            }}>
-                              {member.name}
-                            </div>
-                            <div style={{
-                              backgroundColor: 'rgb(40, 44, 66)',
-                              color: 'rgb(160, 160, 180)',
-                              fontSize: '11px',
-                              padding: '4px 8px',
-                              borderRadius: '4px',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap'
-                            }}>
-                              @{member.minecraft}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Conteúdo */}
-                        <div style={{ padding: '16px' }}>
-                          {/* Badge do cargo */}
-                          <div style={{
-                            backgroundColor: 'rgb(40, 44, 66)',
-                            borderRadius: '6px',
-                            padding: '12px',
-                            textAlign: 'center',
-                            marginBottom: '12px'
-                          }}>
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              gap: '8px'
-                            }}>
-                              <span style={{ fontSize: '18px' }}>
-                                {role.id === 'admin' && '👑'}
-                                {role.id === 'srmod' && '⭐'}
-                                {role.id === 'mod' && '🛡️'}
-                                {role.id === 'helper' && '💬'}
-                                {role.id === 'artisan' && '🎨'}
-                              </span>
-                              <span style={{
-                                color: role.color,
-                                fontSize: '14px',
-                                fontWeight: 'bold'
-                              }}>
-                                {role.name}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Divisor e ícone social */}
-                          <div style={{
-                            borderTop: '2px solid rgb(40, 44, 66)',
-                            paddingTop: '12px',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            gap: '12px'
-                          }}>
-                            {discordAvatar && (
-                              <Image
-                                src={discordAvatar}
-                                alt="Discord"
-                                width={28}
-                                height={28}
-                                style={{
-                                  borderRadius: '50%',
-                                  border: `2px solid ${role.color}`
-                                }}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
+            <p className="muted">Conheca nosso time de staff</p>
           </div>
         </div>
-      </section>
-    </>
+
+        <div className="staff-role-grid">
+          {staffRoles.map((role) => (
+            <div
+              key={role.id}
+              className="card staff-role-card"
+              style={{ "--role-color": role.color } as React.CSSProperties}
+            >
+              <div className="staff-role-header">
+                {(() => {
+                  const Icon = resolveIcon(role.icon || role.slug, Users);
+                  return (
+                    <Icon
+                      aria-hidden="true"
+                      className="staff-role-icon"
+                    />
+                  );
+                })()}
+                <div className="staff-role-heading">
+                  <h2 className="staff-role-title">
+                    {role.name}
+                  </h2>
+                  <p className="staff-role-count">
+                    {role.members.length} {role.members.length === 1 ? "membro" : "membros"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="staff-member-grid">
+                {role.members.map((member) => {
+                  const responsibilityText = member.responsibility?.trim() || role.name;
+                  const minecraftAvatar = member.minecraft_uuid
+                    ? getMinecraftHead3d(member.minecraft_uuid)
+                    : getMinecraftAvatar(member.minecraft);
+                  const displayName = member.minecraft;
+                  return (
+                    <div
+                      key={member.id}
+                      className="staff-member-card"
+                      style={{ "--role-color": role.color } as React.CSSProperties}
+                    >
+                      <div className="staff-member-header">
+                        <img
+                          src={minecraftAvatar}
+                          alt={displayName}
+                          width={56}
+                          height={56}
+                          className="staff-member-avatar"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <div className="staff-member-text">
+                          <div className="staff-member-name">{displayName}</div>
+                        </div>
+                      </div>
+
+                      <div className="staff-member-body">
+                        <div className="staff-member-role">
+                          {(() => {
+                            const Icon = resolveIcon(role.icon || role.slug, Users);
+                            return <Icon aria-hidden="true" className="staff-role-icon" />;
+                          })()}
+                          <span>{role.name}</span>
+                        </div>
+
+                        <div className="staff-member-footer">
+                          <span
+                            className="staff-member-responsibility"
+                            title={responsibilityText}
+                          >
+                            {responsibilityText}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

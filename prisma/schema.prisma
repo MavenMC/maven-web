@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminAccess {
+  discordId       String   @id @db.VarChar(32) @map("discord_id")
+  discordUsername String?  @db.VarChar(100) @map("discord_username")
+  accessLevel     String   @default("admin") @db.VarChar(50) @map("access_level")
+  isActive        Boolean  @default(true) @map("is_active")
+  grantedBy       String?  @db.VarChar(36) @map("granted_by")
+  grantedAt       DateTime @default(now()) @map("granted_at")
+  revokedAt       DateTime? @map("revoked_at")
+  revokedBy       String?  @db.VarChar(36) @map("revoked_by")
+  lastLogin       DateTime? @map("last_login")
+
+  @@index([isActive])
+  @@map("admin_access")
+}
+
+model SiteAnnouncement {
+  id        Int       @id @default(autoincrement())
+  title     String    @db.VarChar(120)
+  highlight String?   @db.VarChar(120)
+  ipText    String?   @db.VarChar(120) @map("ip_text")
+  active    Boolean   @default(true)
+  startsAt  DateTime? @map("starts_at")
+  endsAt    DateTime? @map("ends_at")
+  sortOrder Int       @default(0) @map("sort_order")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([active])
+  @@index([startsAt, endsAt])
+  @@map("site_announcements")
+}
+
+model SiteSocialLink {
+  id        Int      @id @default(autoincrement())
+  label     String   @db.VarChar(120)
+  url       String   @db.VarChar(255)
+  icon      String?  @db.VarChar(60)
+  sortOrder Int      @default(0) @map("sort_order")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([active])
+  @@map("site_social_links")
+}

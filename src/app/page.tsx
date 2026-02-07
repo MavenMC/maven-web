@@ -10,6 +10,7 @@ import {
   getSocialLinks,
 } from "@/lib/site-data";
 import { formatShortDate } from "@/lib/date";
+import { getPostCoverProps } from "@/lib/post-cover";
 import { resolveIcon } from "@/lib/icon-map";
 
 export default async function Home() {
@@ -74,7 +75,7 @@ export default async function Home() {
               </p>
 
               <div className="hero-actions">
-                <Link href="/validar" className="btn primary">
+                <Link href="/perfil#vinculo" className="btn primary">
                   Jogar agora
                 </Link>
                 <a href="/noticias" className="btn secondary">
@@ -255,7 +256,7 @@ export default async function Home() {
                 Conteúdo feito pela equipe para você dominar o servidor.
               </p>
             </div>
-            <a href="/equipe" className="btn secondary">
+            <a href="/trabalhe-conosco" className="btn secondary">
               Entrar para a equipe
             </a>
           </div>
@@ -264,7 +265,7 @@ export default async function Home() {
             {blogPosts.length ? (
               blogPosts.map((post) => (
                 <article key={post.id} className="card blog-card">
-                  <div className={`blog-cover ${post.cover ?? ""}`}>
+                  <div className={getPostCoverProps(post.cover).className} style={getPostCoverProps(post.cover).style}>
                     {post.cover_label || post.tag || "BLOG"}
                   </div>
                   <div>
@@ -274,7 +275,7 @@ export default async function Home() {
                     <h3 className="card-title">{post.title}</h3>
                     <p className="card-sub">{post.summary ?? "Conteúdo novo no blog."}</p>
                   </div>
-                  <a href="/forum" className="btn ghost btn-sm">
+                  <a href={`/blog/${post.id}`} className="btn ghost btn-sm">
                     Ler artigo
                   </a>
                 </article>
@@ -306,57 +307,14 @@ export default async function Home() {
 
           <div className="feature-grid">
             <div className="card">
-              <h3 className="card-title">Candidatura</h3>
+              <h3 className="card-title">Trabalhe Conosco</h3>
               <p className="card-sub">
-                Preencha os campos abaixo. Entraremos em contato pelo Discord.
+                O formul?rio agora fica em uma p?gina dedicada com valida??o de conta vinculada.
               </p>
-
-              <form className="admin-form">
-                <div className="admin-form-grid">
-                  <label>
-                    Nome no jogo
-                    <input type="text" placeholder="Seu nick" />
-                  </label>
-                  <label>
-                    Usuário do Discord
-                    <input type="text" placeholder="@seuusuario" />
-                  </label>
-                  <label>
-                    Idade
-                    <input type="number" placeholder="16" />
-                  </label>
-                  <label>
-                    Função desejada
-                    <select defaultValue="">
-                      <option value="" disabled>
-                        Selecione uma opção
-                      </option>
-                      <option value="mod">Moderação</option>
-                      <option value="builder">Builder</option>
-                      <option value="support">Suporte</option>
-                      <option value="content">Conteúdo</option>
-                    </select>
-                  </label>
-                </div>
-
-                <label>
-                  Experiência no servidor
-                  <textarea rows={4} placeholder="Conte um pouco sobre sua trajetória." />
-                </label>
-
-                <label>
-                  Disponibilidade semanal
-                  <textarea rows={3} placeholder="Dias e horários que você consegue ajudar." />
-                </label>
-
-                <label className="checkbox">
-                  <input type="checkbox" /> Li e concordo com as regras da equipe.
-                </label>
-
-                <button type="button" className="btn primary">
-                  Enviar candidatura
-                </button>
-              </form>
+              <Link href="/trabalhe-conosco" className="btn primary btn-sm">
+                Abrir formul?rio
+              </Link>
+              <p className="muted">? necess?rio ter a conta Minecraft vinculada.</p>
             </div>
 
             <div className="card">
@@ -447,7 +405,7 @@ export default async function Home() {
             {patchNotes.length ? (
               patchNotes.map((note) => (
                 <article key={note.id} className="card blog-card">
-                  <div className={`blog-cover ${note.cover ?? ""}`}>
+                  <div className={getPostCoverProps(note.cover).className} style={getPostCoverProps(note.cover).style}>
                     {note.cover_label || note.tag || "PATCH"}
                   </div>
                   <div>
@@ -498,7 +456,7 @@ export default async function Home() {
                     </div>
                     <h3>{category.title}</h3>
                     <p>{category.description ?? "Acompanhe as discussões do servidor."}</p>
-                    <a href="/forum" className="btn ghost btn-sm">
+                    <a href={`/forum/${category.id}`} className="btn ghost btn-sm">
                       Ver tópicos
                     </a>
                   </article>

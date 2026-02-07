@@ -2,7 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
+  },
   images: {
+    qualities: [100, 75],
     remotePatterns: [
       {
         protocol: 'https',
@@ -13,6 +19,16 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'cdn.discordapp.com',
         pathname: '/avatars/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.discordapp.com',
+        pathname: '/embed/avatars/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'crafatar.com',
+        pathname: '/renders/head/**',
       },
       {
         protocol: 'https',

@@ -5,6 +5,23 @@ import Image from "next/image";
 import { Star, Gamepad2, Gem, MessageCircle } from "lucide-react";
 
 export default function LoginPage() {
+  const authCenterUrl = process.env.NEXT_PUBLIC_AUTH_CENTER_URL;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+  const isAuthCenter = process.env.NEXT_PUBLIC_IS_AUTH_CENTER === "true";
+
+  const handleLogin = () => {
+    if (!isAuthCenter && authCenterUrl && appUrl) {
+      const callbackUrl = `${appUrl}/sso/callback`;
+      const targetUrl = new URL("/sso/start", authCenterUrl);
+      targetUrl.searchParams.set("redirect", callbackUrl);
+      targetUrl.searchParams.set("next", "/");
+      window.location.href = targetUrl.toString();
+      return;
+    }
+
+    void signIn("discord", { callbackUrl: "/" });
+  };
+
   return (
     <div className="login-page-container">
       <div className="login-hero">
@@ -86,7 +103,7 @@ export default function LoginPage() {
               <button 
                 type="button" 
                 className="login-button"
-                onClick={() => signIn("discord", { callbackUrl: "/" })}
+                onClick={handleLogin}
               >
                 <span>Entrar com Discord</span>
                 <svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg" className="login-button-arrow">

@@ -1,6 +1,7 @@
 ﻿import Link from "next/link";
 import { getSitePosts } from "@/lib/site-data";
 import { formatShortDate } from "@/lib/date";
+import { getPostCoverProps } from "@/lib/post-cover";
 
 export default async function PatchNotesPage() {
   const patchNotes = await getSitePosts("patch");
@@ -19,7 +20,7 @@ export default async function PatchNotesPage() {
             {patchNotes.length ? (
               patchNotes.map((note) => (
                 <article key={note.id} className="card blog-card">
-                  <div className={`blog-cover ${note.cover ?? ""}`}>
+                  <div className={getPostCoverProps(note.cover).className} style={getPostCoverProps(note.cover).style}>
                     {note.cover_label || note.tag || "PATCH"}
                   </div>
                   <div>
