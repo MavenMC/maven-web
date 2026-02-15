@@ -9,7 +9,6 @@ build/
 .vscode/
 
 # Environment Variables
-.env
 .env.local
 
 # Project Files
