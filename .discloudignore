@@ -1,7 +1,6 @@
 # Local Build and Dependencies
 node_modules/
 .next/
-out/
 build/
 
 # Source Control
@@ -16,6 +15,4 @@ build/
 .gitignore
 .env.example
 .discloudignore
-vercel.json
-.vercel/
 README.md

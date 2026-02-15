@@ -1,7 +1,6 @@
 # Dependencies and Build Outputs
 node_modules/
 .next/
-out/
 build/
 
 # IDEs and Editors
@@ -9,7 +8,7 @@ build/
 .vscode/
 
 # Environment Variables
-.env.local
+.env.example
 
 # Project Files
 .git/
@@ -18,6 +17,4 @@ build/
 .dockerignore
 .discloudignore
 discloud.config
-vercel.json
-.vercel/
 README.md
