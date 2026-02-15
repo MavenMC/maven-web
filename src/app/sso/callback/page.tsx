@@ -1,29 +1,12 @@
-"use client";
+import { Suspense } from "react";
+import SsoCallbackForm from "./SsoCallbackForm";
 
-import { useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+export const dynamic = "force-dynamic";
 
 export default function SsoCallbackPage() {
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
-  const nextParam = searchParams.get("next") ?? "/";
-  const nextUrl = nextParam.startsWith("/") ? nextParam : "/";
-
-  useEffect(() => {
-    if (!token) return;
-    void signIn("sso", { token, callbackUrl: nextUrl });
-  }, [token, nextUrl]);
-
   return (
-    <div style={{
-      minHeight: "60vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      color: "#fff",
-    }}>
-      Finalizando login...
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <SsoCallbackForm />
+    </Suspense>
   );
 }
