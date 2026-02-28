@@ -66,7 +66,7 @@ export type SiteStaffChange = {
   id: number;
   member_name: string;
   role_name: string | null;
-  action: string;
+  action: "join" | "leave" | "promoted" | "demoted";
   note: string | null;
   happened_at: Date | string | null;
 };
@@ -271,6 +271,45 @@ export async function getStaffChanges(limit?: number) {
     );
   } catch (error) {
     logQueryFailure("Tabela site_staff_changes nao existe ou erro ao buscar mudancas:", error);
+    return [];
+  }
+}
+
+export async function getStaffChangesCount() {
+  if (!dbConfigured) return 0;
+  try {
+    const rows = await dbQuery<Array<{ total: number }>>(
+      `SELECT COUNT(*) AS total
+       FROM site_staff_changes
+       WHERE active = 1`,
+    );
+    return Number(rows[0]?.total ?? 0);
+  } catch (error) {
+    logQueryFailure("Tabela site_staff_changes nao existe ou erro ao contar mudancas:", error);
+    return 0;
+  }
+}
+
+export async function getStaffChangesPaginated(page: number, pageSize: number) {
+  if (!dbConfigured) return [];
+  try {
+    const safePage = Number.isFinite(page) ? Math.max(1, Math.floor(page)) : 1;
+    const safePageSize = Number.isFinite(pageSize) ? Math.max(1, Math.floor(pageSize)) : 10;
+    const offset = (safePage - 1) * safePageSize;
+
+    return await dbQuery<SiteStaffChange[]>(
+      `SELECT id, member_name, role_name, action, note, happened_at
+       FROM site_staff_changes
+       WHERE active = 1
+       ORDER BY happened_at DESC, sort_order ASC, id DESC
+       LIMIT :limit OFFSET :offset`,
+      {
+        limit: safePageSize,
+        offset,
+      },
+    );
+  } catch (error) {
+    logQueryFailure("Tabela site_staff_changes nao existe ou erro ao paginar mudancas:", error);
     return [];
   }
 }

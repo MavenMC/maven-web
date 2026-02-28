@@ -472,6 +472,26 @@ button {
   gap: 0.8rem;
 }
 
+.nav-shop-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(var(--text));
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.nav-shop-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(var(--primary), 0.5);
+  transform: translateY(-1px);
+}
+
 /* Minecraft-style Account Button */
 .btn-header-account {
   display: flex;
@@ -8573,5 +8593,82 @@ select:focus {
 
   .discord-sidebar-section {
     padding: 1rem;
+  }
+}
+
+/* Changelog page styles */
+.changelog-row:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+  cursor: pointer;
+}
+
+.changelog-table-header {
+  display: grid;
+  gridTemplateColumns: 80px 1fr 200px 150px 180px;
+  gap: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  borderRadius: 12px 12px 0 0;
+  borderBottom: 1px solid rgba(255, 255, 255, 0.1);
+  fontWeight: 600;
+  fontSize: 0.875rem;
+  color: #9ca3af;
+}
+
+@media (max-width: 768px) {
+  .changelog-table-header {
+    display: none;
+  }
+  
+  .changelog-row {
+    display: block !important;
+    padding: 1.5rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .changelog-row > div {
+    margin-bottom: 0.75rem;
+  }
+  
+  .changelog-row > div:first-child {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .changelog-row > div:first-child img {
+    width: 64px !important;
+    height: 64px !important;
+  }
+}
+
+/* Punishments page styles */
+.punishments-row:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+@media (max-width: 1024px) {
+  .punishments-table-header {
+    display: none !important;
+  }
+  
+  .punishments-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    padding: 1.5rem !important;
+  }
+  
+  .punishments-row > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .punishments-row > div::before {
+    content: attr(data-label);
+    font-size: 0.75rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    font-weight: 600;
   }
 }

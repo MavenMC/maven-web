@@ -15,8 +15,8 @@ type RoleRow = {
 type MemberRow = {
   id: number;
   role_id: number;
-  name: string;
-  minecraft: string;
+  name: string | null;
+  minecraft: string | null;
   minecraft_uuid: string | null;
   responsibility: string | null;
   sort_order: number;
@@ -44,12 +44,20 @@ async function getStaffData() {
             m.sort_order
      FROM site_staff_members m
      WHERE m.active = 1
+       AND m.name IS NOT NULL AND m.name != ''
+       AND m.minecraft IS NOT NULL AND m.minecraft != ''
      ORDER BY m.sort_order ASC, m.id ASC`,
   );
 
   return roles.map((role) => ({
     ...role,
-    members: members.filter((member) => member.role_id === role.id),
+    members: members.filter((member) => 
+      member.role_id === role.id && 
+      member.minecraft && 
+      member.minecraft.trim().length > 0 &&
+      member.name &&
+      member.name.trim().length > 0
+    ),
   }));
 }
 
@@ -88,16 +96,26 @@ export default async function EquipePage() {
             <div className="leadership-grid">
               {leadershipRoles.map((role) => (
                 role.members.map((member) => {
+                  // Validar dados do membro
+                  if (!member || !member.minecraft || !member.minecraft.trim() || !member.name || !member.name.trim()) {
+                    console.warn(`Membro ${member?.id || '?'} com dados inválidos`);
+                    return null;
+                  }
+
+                  // Extrair valores garantidos após validação
+                  const memberMinecraft = member.minecraft;
+                  const memberId = member.id;
+
                   const Icon = resolveIcon(role.icon || role.slug, Users);
                   const minecraftAvatar = member.minecraft_uuid
                     ? getMinecraftHead3d(member.minecraft_uuid)
-                    : getMinecraftAvatar(member.minecraft);
+                    : getMinecraftAvatar(memberMinecraft);
                   const responsibilityText = member.responsibility?.trim() || role.name;
                   
                   return (
                     <Link
-                      key={member.id}
-                      href={`/equipe/${encodeURIComponent(member.minecraft)}`}
+                      key={memberId}
+                      href={`/equipe/${encodeURIComponent(memberMinecraft)}`}
                       className="hero-card"
                       style={{ "--role-color": role.color } as React.CSSProperties}
                     >
@@ -106,7 +124,7 @@ export default async function EquipePage() {
                         <div className="hero-card-avatar-wrapper">
                           <img
                             src={minecraftAvatar}
-                            alt={member.minecraft}
+                            alt={memberMinecraft}
                             className="hero-card-avatar"
                             loading="eager"
                           />
@@ -116,7 +134,7 @@ export default async function EquipePage() {
                             <Icon size={14} strokeWidth={2.5} />
                             <span>{role.name}</span>
                           </div>
-                          <h3 className="hero-card-name">{member.minecraft}</h3>
+                          <h3 className="hero-card-name">{memberMinecraft}</h3>
                           <p className="hero-card-role">{responsibilityText}</p>
                         </div>
                       </div>
@@ -148,22 +166,32 @@ export default async function EquipePage() {
 
               <div className="staff-grid">
                 {role.members.map((member) => {
+                  // Validar dados do membro
+                  if (!member || !member.minecraft || !member.minecraft.trim() || !member.name || !member.name.trim()) {
+                    console.warn(`Membro ${member?.id || '?'} com dados inválidos`);
+                    return null;
+                  }
+
+                  // Extrair valores garantidos após validação
+                  const memberMinecraft = member.minecraft;
+                  const memberId = member.id;
+
                   const minecraftAvatar = member.minecraft_uuid
                     ? getMinecraftHead3d(member.minecraft_uuid)
-                    : getMinecraftAvatar(member.minecraft);
+                    : getMinecraftAvatar(memberMinecraft);
                   const responsibilityText = member.responsibility?.trim() || role.name;
                   
                   return (
                     <Link
-                      key={member.id}
-                      href={`/equipe/${encodeURIComponent(member.minecraft)}`}
+                      key={memberId}
+                      href={`/equipe/${encodeURIComponent(memberMinecraft)}`}
                       className="staff-card"
                       style={{ "--role-color": role.color } as React.CSSProperties}
                     >
                       <div className="staff-card-header">
                         <img
                           src={minecraftAvatar}
-                          alt={member.minecraft}
+                          alt={memberMinecraft}
                           className="staff-card-avatar"
                           loading="lazy"
                         />
@@ -172,7 +200,7 @@ export default async function EquipePage() {
                         </div>
                       </div>
                       <div className="staff-card-body">
-                        <h3 className="staff-card-name">{member.minecraft}</h3>
+                        <h3 className="staff-card-name">{memberMinecraft}</h3>
                         <p className="staff-card-responsibility">{responsibilityText}</p>
                       </div>
                     </Link>

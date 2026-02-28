@@ -195,7 +195,6 @@ export const authOptions: NextAuthOptions = {
           scope: "identify email guilds",
         },
       },
-      checks: ["pkce"],
       profile(profile) {
         return {
           id: profile.id,
@@ -233,8 +232,8 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      // Sempre revalidar admin access em cada requisição
-      if (trigger === "update" || token.playerId) {
+      // Revalidar admin access apenas quando explicitamente solicitado
+      if (trigger === "update") {
         const playerId = token.playerId as string;
         if (playerId) {
           const adminAccess = await checkAdminAccess(playerId);

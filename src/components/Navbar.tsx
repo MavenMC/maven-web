@@ -22,7 +22,7 @@ const navLinks = [
     ],
   },
   { label: "Ranking", href: "/rankings" },
-  { label: "Punicoes", href: "/punicoes" },
+{ label: "Punições", href: "/punicoes" },
   { label: "Fórum", href: "/forum" },
 ];
 
@@ -67,6 +67,20 @@ export default function Navbar() {
         </nav>
 
         <div className="nav-actions">
+          <a
+            href="https://loja.mavenmc.com.br/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-shop-btn"
+            aria-label="Abrir loja"
+            title="Loja"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M3 4H5L7.2 14.2C7.36 14.93 8 15.45 8.75 15.45H18.6C19.31 15.45 19.93 14.98 20.13 14.3L22 8H6.1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="9.2" cy="19.2" r="1.5" stroke="currentColor" strokeWidth="1.8"/>
+              <circle cx="18.2" cy="19.2" r="1.5" stroke="currentColor" strokeWidth="1.8"/>
+            </svg>
+          </a>
           <ContaConectada />
         </div>
 

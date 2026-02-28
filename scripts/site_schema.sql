@@ -163,6 +163,53 @@ CREATE TABLE IF NOT EXISTS site_staff_changes (
   INDEX idx_site_staff_changes_date (happened_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS site_recruitment_settings (
+  id TINYINT NOT NULL,
+  is_open BOOLEAN NOT NULL DEFAULT FALSE,
+  opens_at DATETIME NULL,
+  closes_at DATETIME NULL,
+  terms_mdx LONGTEXT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS site_recruitment_questions (
+  id INT NOT NULL AUTO_INCREMENT,
+  label VARCHAR(180) NOT NULL,
+  field_type VARCHAR(20) NOT NULL DEFAULT 'text',
+  required BOOLEAN NOT NULL DEFAULT TRUE,
+  options_json TEXT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX idx_site_recruitment_questions_active (active),
+  INDEX idx_site_recruitment_questions_sort (sort_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS site_recruitment_responses (
+  id INT NOT NULL AUTO_INCREMENT,
+  minecraft_uuid VARCHAR(36) NULL,
+  minecraft_name VARCHAR(80) NULL,
+  discord_id VARCHAR(36) NULL,
+  discord_name VARCHAR(100) NULL,
+  answers_json LONGTEXT NOT NULL,
+  terms_accepted BOOLEAN NOT NULL DEFAULT FALSE,
+  terms_accepted_at DATETIME NULL,
+  review_status VARCHAR(20) NOT NULL DEFAULT 'pending',
+  submitted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX idx_site_recruitment_responses_submitted (submitted_at),
+  INDEX idx_site_recruitment_responses_discord (discord_id),
+  INDEX idx_site_recruitment_responses_minecraft (minecraft_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO site_recruitment_settings (id, is_open)
+VALUES (1, 0)
+ON DUPLICATE KEY UPDATE id = VALUES(id);
+
 CREATE TABLE IF NOT EXISTS site_staff_profiles (
   member_id INT NOT NULL,
   bio TEXT NULL,
