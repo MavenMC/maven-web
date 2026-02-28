@@ -1,7 +1,8 @@
 ﻿import Image from "next/image";
 import Link from "next/link";
-import { Megaphone, MessageSquare, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { MessageSquare, Users } from "lucide-react";
 import { getDiscordStats } from "@/lib/discord";
+import HomeMinecraftShowcase from "@/components/HomeMinecraftShowcase";
 import {
   getChangelogEntries,
   getForumCategories,
@@ -53,86 +54,7 @@ export default async function Home() {
 
   return (
     <>
-      <section id="inicio" className="home-hero">
-        <div className="home-hero-bg" aria-hidden="true" />
-        <div className="container home-hero-grid">
-          <div className="home-hero-copy">
-            <span className="home-hero-pill">Maven Network • Java + Bedrock</span>
-            <h1>
-              O survival que vira história.
-              <span className="home-hero-accent"> Viva o servidor.</span>
-            </h1>
-            <p>
-              Progressão RPG, economia viva e eventos que mudam a temporada. Entre, jogue e deixe sua
-              marca na comunidade.
-            </p>
-
-            <div className="home-hero-actions">
-              <Link href="/perfil#vinculo" className="btn primary">
-                Jogar agora
-              </Link>
-              <Link href="/forum" className="btn secondary">
-                Entrar na comunidade
-              </Link>
-            </div>
-
-            <div className="home-hero-highlights">
-              <div className="home-highlight">
-                <span className="home-highlight-icon">
-                  <Sparkles size={18} />
-                </span>
-                <div>
-                  <div className="home-highlight-title">Progressão RPG</div>
-                  <div className="home-highlight-text">Classes, perks e jornadas únicas.</div>
-                </div>
-              </div>
-              <div className="home-highlight">
-                <span className="home-highlight-icon">
-                  <Megaphone size={18} />
-                </span>
-                <div>
-                  <div className="home-highlight-title">Eventos ao vivo</div>
-                  <div className="home-highlight-text">Sazonais, semanais e torneios.</div>
-                </div>
-              </div>
-              <div className="home-highlight">
-                <span className="home-highlight-icon">
-                  <ShieldCheck size={18} />
-                </span>
-                <div>
-                  <div className="home-highlight-title">Staff presente</div>
-                  <div className="home-highlight-text">Suporte ativo todos os dias.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="home-hero-panel">
-            <div className="home-hero-logo">
-              <Image
-                src="/logo.png"
-                alt="Logo do MavenMC"
-                fill
-                sizes="(max-width: 640px) 80vw, (max-width: 1024px) 60vw, 320px"
-                className="home-hero-logo-img"
-                priority
-              />
-            </div>
-            <div className="home-hero-cards">
-              <div className="home-hero-card">
-                <span className="card-eyebrow">IP do servidor</span>
-                <strong>mavenmc.com.br</strong>
-                <span className="card-sub">Bedrock: play.mavenmc.com.br</span>
-              </div>
-              <div className="home-hero-card">
-                <span className="card-eyebrow">Online agora</span>
-                <strong>{membersOnline} jogadores</strong>
-                <span className="card-sub">Comunidade ativa neste momento</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HomeMinecraftShowcase membersOnline={membersOnline} />
 
       <section className="section home-stats">
         <div className="container">

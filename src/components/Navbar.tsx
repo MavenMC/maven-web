@@ -26,7 +26,11 @@ const navLinks = [
   { label: "Fórum", href: "/forum" },
 ];
 
-export default function Navbar() {
+type NavbarProps = {
+  hideLogo?: boolean;
+};
+
+export default function Navbar({ hideLogo = false }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobile = () => setMobileOpen(false);
@@ -34,11 +38,13 @@ export default function Navbar() {
   return (
     <header className="nav">
       <div className="container nav-inner">
-        <Link href="/" className="logo" onClick={closeMobile}>
-          <img className="logo-nav" src="/logos/slogan.png" alt="Maven" />
-          <img className="logo-mark-small" src="/logos/favicon.png" alt="Maven" />
-          <span className="logo-text">Network</span>
-        </Link>
+        {!hideLogo && (
+          <Link href="/" className="logo" onClick={closeMobile}>
+            <img className="logo-nav" src="/logos/slogan.png" alt="Maven" />
+            <img className="logo-mark-small" src="/logos/favicon.png" alt="Maven" />
+            <span className="logo-text">Network</span>
+          </Link>
+        )}
 
         <nav className="nav-links" aria-label="Seções do site">
           {navLinks.map((link) => (

@@ -1,5 +1,5 @@
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import NavbarConditional from "@/components/NavbarConditional";
 import Footer from "@/components/Footer";
 import Providers from "./providers";
 import { getSiteAnnouncement } from "@/lib/site-data";
@@ -24,7 +24,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 {announcement.ip_text && <span className="announce-ip">{announcement.ip_text}</span>}
               </div>
             )}
-            <Navbar />
+            <NavbarConditional />
             <main>{children}</main>
             <Footer />
           </div>
