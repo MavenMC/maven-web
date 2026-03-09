@@ -116,26 +116,26 @@ export default async function EquipePage() {
                     <Link
                       key={memberId}
                       href={`/equipe/${encodeURIComponent(memberMinecraft)}`}
-                      className="hero-card"
+                      className="staff-role-card"
                       style={{ "--role-color": role.color } as React.CSSProperties}
                     >
-                      <div className="hero-card-glow"></div>
-                      <div className="hero-card-content">
-                        <div className="hero-card-avatar-wrapper">
+                      <div className="staff-role-card-glow"></div>
+                      <div className="staff-role-card-content">
+                        <div className="staff-role-card-avatar-wrapper">
                           <img
                             src={minecraftAvatar}
                             alt={memberMinecraft}
-                            className="hero-card-avatar"
+                            className="staff-role-card-avatar"
                             loading="eager"
                           />
                         </div>
-                        <div className="hero-card-info">
-                          <div className="hero-card-badge">
+                        <div className="staff-role-card-info">
+                          <div className="staff-role-card-badge">
                             <Icon size={14} strokeWidth={2.5} />
                             <span>{role.name}</span>
                           </div>
-                          <h3 className="hero-card-name">{memberMinecraft}</h3>
-                          <p className="hero-card-role">{responsibilityText}</p>
+                          <h3 className="staff-role-card-name">{memberMinecraft}</h3>
+                          <p className="staff-role-card-role">{responsibilityText}</p>
                         </div>
                       </div>
                     </Link>

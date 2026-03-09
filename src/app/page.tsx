@@ -2,7 +2,9 @@
 import Link from "next/link";
 import { MessageSquare, Users } from "lucide-react";
 import { getDiscordStats } from "@/lib/discord";
+import { getMinecraftStatus } from "@/lib/minecraft-status";
 import HomeMinecraftShowcase from "@/components/HomeMinecraftShowcase";
+import HomeBlogCarousel from "@/components/HomeBlogCarousel";
 import {
   getChangelogEntries,
   getForumCategories,
@@ -16,6 +18,7 @@ import { resolveIcon } from "@/lib/icon-map";
 export default async function Home() {
   const [
     discord,
+    mcStatus,
     stats,
     newsItems,
     blogPosts,
@@ -25,9 +28,10 @@ export default async function Home() {
     socialLinks,
   ] = await Promise.all([
     getDiscordStats(),
+    getMinecraftStatus(),
     getSiteStats(4),
     getSitePosts("news", 3),
-    getSitePosts("blog", 3),
+    getSitePosts("blog", 5),
     getSitePosts("patch", 3),
     getChangelogEntries(3),
     getForumCategories(6),
@@ -35,7 +39,7 @@ export default async function Home() {
   ]);
 
   const membersOnline =
-    discord.membersOnline === null ? "-" : discord.membersOnline.toLocaleString("pt-BR");
+    mcStatus.playersOnline === null ? "-" : mcStatus.playersOnline.toLocaleString("pt-BR");
   const primarySocials = socialLinks.slice(0, 4);
 
   const parseItems = (itemsJson: string | null) => {
@@ -56,42 +60,14 @@ export default async function Home() {
     <>
       <HomeMinecraftShowcase membersOnline={membersOnline} />
 
-      <section className="section home-stats">
-        <div className="container">
-          <div className="home-stats-header">
-            <div>
-              <span className="section-kicker">Essência do servidor</span>
-              <h2>Números que provam a jornada</h2>
-              <p className="muted">Cada temporada deixa uma história nova para contar.</p>
-            </div>
-            <Link href="/changelog" className="btn ghost btn-sm">
-              Ver tudo
-            </Link>
-          </div>
-          <div className="home-stats-grid">
-            {stats.length ? (
-              stats.map((stat) => (
-                <div key={stat.id} className="card home-stat-card">
-                  <h3>{stat.value}</h3>
-                  <p className="muted">{stat.label}</p>
-                </div>
-              ))
-            ) : (
-              <div className="card">
-                <h3>Sem dados</h3>
-                <p className="muted">Cadastre estatísticas no painel.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+      <HomeBlogCarousel posts={blogPosts} />
 
       <section className="section home-updates">
         <div className="container">
           <div className="section-header">
             <div>
               <span className="section-kicker">Atualizações</span>
-              <h2>O que está acontecendo agora</h2>
+              <h2 className="mvn-section-head">O que está acontecendo agora</h2>
               <p className="muted">Notícias, novidades e patches em um só lugar.</p>
             </div>
             <Link href="/noticias" className="btn secondary">
@@ -210,7 +186,7 @@ export default async function Home() {
           <div className="home-community-grid">
             <div className="home-community-copy">
               <span className="section-kicker">Comunidade</span>
-              <h2>O rosto do servidor vive aqui</h2>
+              <h2 className="mvn-section-head">O rosto do servidor vive aqui</h2>
               <p className="muted">
                 Participe das discussões, receba avisos em primeira mão e acompanhe as lives da equipe.
               </p>
@@ -277,10 +253,10 @@ export default async function Home() {
 
       <section id="forum" className="section">
         <div className="container">
-          <div className="section-header">
+          <div className="section-header section-header--dramatic">
             <div>
               <span className="section-kicker">Fórum</span>
-              <h2>Conecte-se com a comunidade</h2>
+              <h2 className="mvn-section-head">Conecte-se com a comunidade</h2>
               <p className="muted">
                 Sugestões, suporte e networking entre jogadores em um só lugar.
               </p>
@@ -332,7 +308,7 @@ export default async function Home() {
           <div className="section-header">
             <div>
               <span className="section-kicker">Changelog</span>
-              <h2>Histórico de alterações</h2>
+              <h2 className="mvn-section-head">Histórico de alterações</h2>
               <p className="muted">
                 Tudo o que mudou no servidor, organizado por versão.
               </p>
@@ -371,10 +347,10 @@ export default async function Home() {
 
       <section id="equipe" className="section">
         <div className="container">
-          <div className="section-header">
+          <div className="section-header section-header--dramatic">
             <div>
               <span className="section-kicker">Trabalhe Conosco</span>
-              <h2>Faça parte da equipe</h2>
+              <h2 className="mvn-section-head">Faça parte da equipe</h2>
               <p className="muted">
                 Quer ajudar a construir o servidor? Mostre suas habilidades no formulário.
               </p>

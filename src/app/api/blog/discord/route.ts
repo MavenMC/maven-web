@@ -68,9 +68,9 @@ export async function POST(request: NextRequest) {
 
   await dbQuery(
     `INSERT INTO site_posts
-      (type, title, summary, content, tag, cover, cover_label, published_at, sort_order, active)
+      (type, title, summary, content, tag, cover, cover_label, published_at, sort_order, active, created_at, updated_at)
      VALUES
-      ('blog', :title, :summary, :content, :tag, :cover, :cover_label, :published_at, :sort_order, :active)`,
+      ('blog', :title, :summary, :content, :tag, :cover, :cover_label, :published_at, :sort_order, :active, NOW(), NOW())`,
     {
       title,
       summary: resolvedSummary,

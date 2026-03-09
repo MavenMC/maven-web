@@ -38,9 +38,9 @@ async function createPost(formData: FormData) {
 
   await dbQuery(
     `INSERT INTO site_posts
-      (type, title, summary, tag, cover, cover_label, published_at, sort_order, active)
+      (type, title, summary, tag, cover, cover_label, published_at, sort_order, active, created_at, updated_at)
      VALUES
-      ('news', :title, :summary, :tag, :cover, :cover_label, :published_at, :sort_order, :active)`,
+      ('news', :title, :summary, :tag, :cover, :cover_label, :published_at, :sort_order, :active, NOW(), NOW())`,
     {
       title,
       summary,
@@ -172,7 +172,7 @@ export default async function AdminNewsPage() {
             {posts.map((post) => (
               <div key={post.id} className="card admin-card">
                 <form className="admin-form" action={updatePost}>
-                  <input type="hidden" name="id" value={post.id} />
+                  <input type="hidden" name="id" value={String(post.id)} />
                   <label>
                     Título
                     <input name="title" defaultValue={post.title} />
@@ -214,7 +214,7 @@ export default async function AdminNewsPage() {
                   </button>
                 </form>
                 <form action={deletePost}>
-                  <input type="hidden" name="id" value={post.id} />
+                  <input type="hidden" name="id" value={String(post.id)} />
                   <button className="btn ghost" type="submit">
                     Remover
                   </button>

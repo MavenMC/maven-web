@@ -28,7 +28,7 @@ async function createStat(formData: FormData) {
   if (!label || !value) return;
 
   await dbQuery(
-    "INSERT INTO site_stats (label, value, sort_order, active) VALUES (:label, :value, :sort_order, :active)",
+    "INSERT INTO site_stats (label, value, sort_order, active, updated_at) VALUES (:label, :value, :sort_order, :active, NOW())",
     { label, value, sort_order: sortOrder, active },
   );
 

@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "member_name is required" }, { status: 400 });
   }
 
-  const payload = {
+  const entryPayload = {
     member_name: memberName,
     role_name: roleName,
     action,
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
         (:id, :member_name, :role_name, :action, :note, :happened_at, :sort_order, :active)`,
       {
         id: nextId,
-        ...payload,
+        ...entryPayload,
       },
     );
   } catch (error) {
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
         (member_name, role_name, action, note, happened_at, sort_order, active)
        VALUES
         (:member_name, :role_name, :action, :note, :happened_at, :sort_order, :active)`,
-      payload,
+      entryPayload,
     );
     console.warn("Fallback de INSERT sem id aplicado em /api/changelog/staff", error);
   }

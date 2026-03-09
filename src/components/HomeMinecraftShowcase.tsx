@@ -1,146 +1,186 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 
 type Props = {
   membersOnline: string;
 };
 
-type Slide = {
-  image: string;
-  title: string;
-  subtitle: string;
-  ctaLabel: string;
-  ctaHref: string;
-};
-
-const slides: Slide[] = [
-  {
-    image: "/background/Captura_de_Tela_353.png",
-    title: "BEM-VINDO À NOVA TEMPORADA",
-    subtitle: "Progressão, eventos e economia viva para jogar com sua equipe.",
-    ctaLabel: "Começar agora",
-    ctaHref: "/perfil#vinculo",
-  },
-  {
-    image: "/bg.jpg",
-    title: "EVENTOS DIÁRIOS E RECOMPENSAS",
-    subtitle: "Participe de desafios e suba no ranking da comunidade.",
-    ctaLabel: "Ver rankings",
-    ctaHref: "/rankings",
-  },
-  {
-    image: "/bg.png",
-    title: "STAFF ATIVO E SUPORTE RÁPIDO",
-    subtitle: "Precisa de ajuda? Nossa equipe responde no Discord e no fórum.",
-    ctaLabel: "Abrir fórum",
-    ctaHref: "/forum",
-  },
-];
-
 export default function HomeMinecraftShowcase({ membersOnline }: Props) {
-  const [activeSlide, setActiveSlide] = useState(0);
+  const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  const copyIp = () => {
+    navigator.clipboard.writeText("mavenmc.com.br").then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    });
+  };
 
   return (
-    <section id="inicio" className="mc-showcase">
+    <section id="inicio" className="hero-cinematic">
 
-      {/* ── BANNER TOPO ─────────────────────────────── */}
-      <div className="mc-top-banner">
-        <div className="mc-top-banner-content">
-          <div className="mc-brand">
+      {/* ── 1. BLURRED FULL-WIDTH BACKGROUND ─────────────────────────── */}
+      <div className="hero-blur-bg" aria-hidden="true">
+        <Image
+          src="/background/teste_back.png"
+          alt=""
+          fill
+          className="hero-blur-bg-img"
+          priority
+        />
+        <div className="hero-blur-veil" />
+      </div>
+
+      {/* ── 2. NAVBAR (overlay sobre o blur) ────────────────────────── */}
+      <Navbar />
+
+      {/* ── 3. CARD ELEVADO ─────────────────────────────────────────── */}
+      <div className="hero-stage">
+        <div className="hero-card">
+
+          {/* Imagem limpa dentro do card */}
+          <div className="hero-card-bg" aria-hidden="true">
             <Image
-              src="/logos/mavennetwork.png"
-              alt="Maven"
-              width={340}
-              height={94}
-              className="mc-brand-logo"
+              src="/background/teste_back.png"
+              alt=""
+              fill
+              className="hero-card-bg-img"
               priority
             />
+            <div className="hero-card-overlay" />
           </div>
-          <div className="mc-status-strip">
-            <span className="mc-status-ip">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z" />
-              </svg>
-              MAVENMC.COM.BR
-            </span>
-            <span className="mc-status-online">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-              </svg>
-              {membersOnline} JOGADORES
-            </span>
-            <a
-              href="https://discord.gg/mvn"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mc-status-discord"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.045.03.06a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z" />
-              </svg>
-              DISCORD
-            </a>
-          </div>
-        </div>
-      </div>
 
-      {/* ── NAVBAR (posicionada entre o banner e o slider) ── */}
-      <Navbar hideLogo />
+          {/* Conteúdo */}
+          <div className="hero-body">
 
-      {/* ── SLIDER ──────────────────────────────────── */}
-      <div className="mc-slider">
-        {slides.map((slide, index) => {
-          const isActive = index === activeSlide;
-          return (
-            <article
-              key={slide.title}
-              className={`mc-slide${isActive ? " active" : ""}`}
-              aria-hidden={!isActive}
-            >
+            <div className="hero-logo-wrap">
               <Image
-                src={slide.image}
-                alt={slide.title}
-                fill
-                className="mc-slide-bg"
-                priority={index === 0}
+                src="/logos/mavennetwork.png"
+                alt="Maven Network"
+                width={520}
+                height={144}
+                className="hero-logo"
+                priority
               />
-              <div className="mc-slide-overlay" />
-              <div className="mc-slide-content">
-                <h1 className="mc-slide-title">{slide.title}</h1>
-                <p className="mc-slide-subtitle">{slide.subtitle}</p>
-                <Link href={slide.ctaHref} className="mc-slide-cta">
-                  {slide.ctaLabel}
-                </Link>
-              </div>
-            </article>
-          );
-        })}
+            </div>
 
-        <div className="mc-slider-dots" role="tablist" aria-label="Trocar slide">
-          {slides.map((slide, index) => (
-            <button
-              key={slide.title}
-              type="button"
-              className={index === activeSlide ? "active" : ""}
-              onClick={() => setActiveSlide(index)}
-              aria-label={`Slide ${index + 1}`}
-              aria-selected={index === activeSlide}
-              role="tab"
-            />
-          ))}
+            <p className="hero-tagline">
+              Um servidor multijogador gratuito para Minecraft:<br />
+              <span>Java Edition & Bedrock</span>
+            </p>
+
+            {/* ── Info cards ─────────────────────────────────────────── */}
+            <div className="hi-cards">
+
+              {/* Card 1 – Status */}
+              <div className="hi-card">
+                <div className="hi-card-inner hi-card-inner--icon">
+                  <div className="hi-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="2" y="2" width="20" height="8" rx="2" />
+                      <rect x="2" y="14" width="20" height="8" rx="2" />
+                      <line x1="6" y1="6" x2="6.01" y2="6" />
+                      <line x1="6" y1="18" x2="6.01" y2="18" />
+                    </svg>
+                  </div>
+                  <div className="hi-card-content">
+                    <span className="hi-card-head">
+                      <span className="hi-online-dot" aria-hidden="true" />
+                      {membersOnline} Online
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2 – Discord */}
+              <a
+                href="https://discord.gg/mvn"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hi-card hi-card--discord"
+              >
+                <div className="hi-card-inner hi-card-inner--icon">
+                  <div className="hi-card-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.045.03.06a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z" />
+                    </svg>
+                  </div>
+                  <div className="hi-card-content">
+                    <span>Entre no Discord</span>
+                  </div>
+                </div>
+              </a>
+
+              {/* Card 3 – Social + Copy IP */}
+              <div className="hi-card hi-card--social">
+                <div className="hi-card-inner">
+                  <ul className="hi-social-list">
+                    <li>
+                      <button
+                        type="button"
+                        onClick={copyIp}
+                        className={`hi-social-btn hi-social-btn--ip${copied ? " hi-social-btn--copied" : ""}`}
+                        aria-label={copied ? "IP copiado" : "Copiar IP"}
+                      >
+                        {copied ? (
+                          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" /></svg>
+                        ) : (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                          </svg>
+                        )}
+                      </button>
+                    </li>
+                    <li>
+                      <a
+                        href="https://youtube.com/@nickzin"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hi-social-btn"
+                        aria-label="YouTube"
+                      >
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg>
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://tiktok.com/@chelseazk_"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hi-social-btn"
+                        aria-label="TikTok"
+                      >
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z" />
+                        </svg>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Scroll hint */}
+          <div className="hero-scroll-hint" aria-hidden="true">
+            <span>Rolar</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M5 12l7 7 7-7" />
+            </svg>
+          </div>
+
         </div>
       </div>
+
+      {/* ── 4. BOTTOM ART — borda serrilhada que mergulha no page bg ── */}
+      <div className="hero-bottom-art" aria-hidden="true" />
 
     </section>
   );

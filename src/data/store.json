@@ -1,0 +1,36 @@
+{
+  "vips": [
+    {
+      "id": "lendario",
+      "nome": "LENDÁRIO",
+      "preco": {
+        "valor": 19.95,
+        "tipo": "unico"
+      }
+    },
+    {
+      "id": "supremo",
+      "nome": "SUPREMO",
+      "preco": {
+        "valor": 29.95,
+        "tipo": "unico"
+      }
+    },
+    {
+      "id": "imperador",
+      "nome": "IMPERADOR",
+      "preco": {
+        "valor": 44.95,
+        "tipo": "unico"
+      }
+    },
+    {
+      "id": "monarca",
+      "nome": "MONARCA",
+      "preco": {
+        "valor": 59.95,
+        "tipo": "mensal"
+      }
+    }
+  ]
+}
